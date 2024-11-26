@@ -3,26 +3,23 @@ import ThemeToggleButton from "./ThemeToggleButton";
 import Link from '@/components/Link'
 import ChatButton from "./ChatButton";
 import ActiveCodeButton from "./ActiveCodeButton";
-import Background from "./Background";
+
+import { MousePointerClick } from 'lucide-react';
 
 const links = [
-  {path: 'tutorial', text: '教程'},
-  {path: 'component', text: '组件'},
-  {path: 'blog', text: '博客'},
+  {path: 'base', text: 'React'},
+  {path: 'perfomance', text: 'Performance'},
+  {path: 'next', text: 'NextJS'},
 ]
 
 export default function Nav() {
   return (
-    <header className='pt-16'>
-      <Flex between className='fixed top-0 z-50 w-full h-16 border-b border-slate-200 bg-white px-8 bg-opacity-70'>
+    <header className='w-full top-0 sticky flex justify-center border-b border-border z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
+      <Flex between className='w-full max-w-[1400px] h-16 px-8 bg-opacity-70'>
         <Flex>
-          <Link className='font-bold text-md flex items-center' href='/'>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5">
-              <path fillRule="evenodd"
-                    d="M12 1.5a.75.75 0 0 1 .75.75V4.5a.75.75 0 0 1-1.5 0V2.25A.75.75 0 0 1 12 1.5ZM5.636 4.136a.75.75 0 0 1 1.06 0l1.592 1.591a.75.75 0 0 1-1.061 1.06l-1.591-1.59a.75.75 0 0 1 0-1.061Zm12.728 0a.75.75 0 0 1 0 1.06l-1.591 1.592a.75.75 0 0 1-1.06-1.061l1.59-1.591a.75.75 0 0 1 1.061 0Zm-6.816 4.496a.75.75 0 0 1 .82.311l5.228 7.917a.75.75 0 0 1-.777 1.148l-2.097-.43 1.045 3.9a.75.75 0 0 1-1.45.388l-1.044-3.899-1.601 1.42a.75.75 0 0 1-1.247-.606l.569-9.47a.75.75 0 0 1 .554-.68ZM3 10.5a.75.75 0 0 1 .75-.75H6a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 10.5Zm14.25 0a.75.75 0 0 1 .75-.75h2.25a.75.75 0 0 1 0 1.5H18a.75.75 0 0 1-.75-.75Zm-8.962 3.712a.75.75 0 0 1 0 1.061l-1.591 1.591a.75.75 0 1 1-1.061-1.06l1.591-1.592a.75.75 0 0 1 1.06 0Z"
-                    clipRule="evenodd"/>
-            </svg>
-            <div className='ml-2'>React Base</div>
+          <Link className='font-bold flex items-center' href='/'>
+            <MousePointerClick />
+            <div className='ml-2 text-md'>NextJS 启动</div>
           </Link>
 
           <div>
@@ -40,9 +37,7 @@ export default function Nav() {
           >
             推荐：JavaScript 核心进阶
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-4 ml-1">
-              <path fillRule="evenodd"
-                    d="M16.28 11.47a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 0 1-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 0 1 1.06-1.06l7.5 7.5Z"
-                    clipRule="evenodd"/>
+              <path fillRule="evenodd" d="M16.28 11.47a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 0 1-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 0 1 1.06-1.06l7.5 7.5Z" clipRule="evenodd" />
             </svg>
           </a>
         </Flex>
@@ -52,7 +47,6 @@ export default function Nav() {
           <ThemeToggleButton/>
         </Flex>
       </Flex>
-      <Background />
     </header>
   )
 }

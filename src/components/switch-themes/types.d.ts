@@ -1,7 +1,7 @@
 import React, {Dispatch, SetStateAction, PropsWithChildren} from 'react'
 
 export interface UseThemeProps {
-  setTheme: Dispatch<SetStateAction<string>>,
+  setTheme: (theme: string) => any,
   theme: string
 }
 

@@ -1,5 +1,5 @@
 export default function App() {
   return (
-    <div>hello blog</div>
+    <div>hello login</div>
   )
 }

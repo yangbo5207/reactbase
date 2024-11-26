@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import {twMerge} from 'tailwind-merge'
 
-export default function Base(props) {
+export default function Base(props: any) {
   const {className, children, ...others} = props
 
   let bgclass = ''

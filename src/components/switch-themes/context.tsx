@@ -27,7 +27,7 @@ export default function Provider(props: ThemeProviderProps) {
 
   const value = {
     theme,
-    setTheme: (theme) => {
+    setTheme: (theme: string) => {
       changeTheme(theme)
       const d = document.documentElement
       d.classList.remove(...themes)
@@ -56,7 +56,7 @@ function ThemeScript({storageKey, defaultTheme, nonce}: Omit<ThemeProviderProps,
   )
 }
 
-function getTheme(key: string, defaultValue?: string) {
+function getTheme(key: string, defaultValue: string) {
   let theme
   try {
     theme = localStorage.getItem(key) || undefined

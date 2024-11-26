@@ -1,4 +1,4 @@
-export function script(storageKey, defaultTheme) {
+export function script(storageKey: string, defaultTheme: string) {
   const el = document.documentElement
   const themes = ['light', 'dark']
 
