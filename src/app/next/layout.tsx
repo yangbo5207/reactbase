@@ -5,7 +5,6 @@ export default async function NextLayout({ children }: any) {
       <div className='keep max-w-3xl mx-auto px-6'>
         {children}
       </div>
-
     </div>
   )
 }

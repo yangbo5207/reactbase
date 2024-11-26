@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useOptimistic, useTransition } from 'react'
 import {getLikeCountByArticle, incrementLikeCount} from './apic'
 
-const LikeButton = ({ article = 'helox', like }) => {
+const LikeButton = ({ article = 'helox', like = 0 }) => {
   const [counter, setCounter] = useState<number>(like)
   const [optimisticCounter, addOptimisticCounter] = useOptimistic<number, number>(counter, (state, newState) => newState)
   const [isPending, startTransition] = useTransition()
