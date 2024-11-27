@@ -14,6 +14,7 @@ export default function ActiveLink(props: LinkProps) {
   const {children, active, className, href, ...others} = props
 
   const cls = clsx(className, {
+    // @ts-ignore
     [active]: pathname.includes(href as string)
   })
 
