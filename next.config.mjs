@@ -1,16 +1,32 @@
 import createMDX from '@next/mdx'
 import remarkGfm from 'remark-gfm'
-import rehypePrettyCode from 'rehype-pretty-code'
+// import rehypePrettyCode from 'rehype-pretty-code'
+// import { transformerNotationDiff } from '@shikijs/transformers';
+// import { transformerCopyButton } from '@rehype-pretty/transformers'
+import {remarkCodeHike, recmaCodeHike} from 'codehike/mdx'
 
-const options = {
-  // Use one of Shiki's packaged themes
-  // https://shiki.style/themes#themes
-  theme: "one-dark-pro",
-  // Keep the background or use a custom background color?
-  keepBackground: true,
-  defaultLang: "plaintext",
-};
+// const options = {
+//   // Use one of Shiki's packaged themes
+//   // https://shiki.style/themes#themes
+//   theme: "one-dark-pro",
+//   // Keep the background or use a custom background color?
+//   keepBackground: true,
+//   defaultLang: "plaintext",
+//   transformers: [
+//     transformerNotationDiff(),
+//     transformerCopyButton({
+//       visibility: 'hover',
+//       feedbackDuration: 3_000
+//     })
+//   ]
+// };
 
+const chConfig = {
+  components: {
+    inlineCode: "InlineCode",
+    code: "Code"
+  },
+}
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -30,8 +46,9 @@ const withMDX = createMDX({
   // Add markdown plugins here, as desired
   extension: /\.mdx?$/,
   options: {
-    remarkPlugins: [remarkGfm],
-    rehypePlugins: [[rehypePrettyCode, options]],
+    remarkPlugins: [[remarkCodeHike, chConfig]],
+    recmaPlugins: [[recmaCodeHike, chConfig]],
+    jsx: true,
   }
 })
 

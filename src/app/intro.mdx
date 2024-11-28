@@ -1,8 +1,31 @@
+import {CodeWithTabs} from '@/components/code-with-tabs'
+
 这是我新开的一本付费专栏。未来的一段时间里我会把所有的精力都放在这本专栏的更新上。
 
 本专栏名为 **《Next.js 启动！》**，由群友取名。
 
 **《Next.js 启动！》** 是一本主要面向**高阶前端**的付费专栏。核心的目标是为了帮助**少数**有志于冲击更好团队的前端开发者扩展技术能力。在专栏的内容设计里，我不会像官方文档那样，按部就班的直接讲解具体的技术细节，而是
+
+```tsx interfac.tsx -c -wa
+function lorem(ipsum, dolor = 1) {
+  const sit = ipsum == null ? 0 : ipsum.sit
+  // !diff -
+  dolor = ipsum - sit
+  // !diff +
+  dolor = sit - amet(dolor)
+  return sit ? consectetur(ipsum) : []
+}
+```
+
+```tsx page.tsx -c
+!from ./page.tsx
+```
+
+This is not handled by Code Hike: `var x = 10`
+
+This is handled by Code Hike (with jsx as default lang): _`var x = 10`_
+
+With a diffrent language: _css`a { color: #123 }`_
 
 + **0、** 会花费大量篇幅来贯通前置的基础理论
 + **1、** 会设计大量的场景思考沉浸式学习
@@ -15,12 +38,28 @@
 + **8、** 会分享如何思考项目中的亮点，如何将亮点在面试中合理的呈现
 + **9、** 会在付费群内直播讲解答疑，共同进步
 
+<CodeWithTabs>
+```js !!tabs main.js -c
+function lorem(ipsum, dolor = 1) {
+  const sit = ipsum == null ? 0 : ipsum.sit
+  dolor = sit - amet(dolor)
+  return sit ? consectetur(ipsum) : []
+}
+```
+
+```css !!tabs styles.css
+body {
+  margin: 0;
+  padding: 0;
+}
+```
+</CodeWithTabs>
+
 因此，本专栏虽然是在讲 Next.js，但是会有大量的内容与 Next.js 无关，我的意图是通过理论结合实践，帮助大家能够使用 Next.js 去解决服务端渲染实践中我们本来就需要去解决的问题与困境。
 
 《Next.js 启动》会帮助大家扩展前端的边界，让我们更加精准的认知 Next.js 与服务端渲染。
 
 最终，我们会从 Next.js 出发，把相关的工作积累与沉淀都通过本专栏呈现出来。
-
 
 ## **购买价格**
 
@@ -37,6 +76,17 @@
 **5、** 购买过 **《KeepCoder》** 付费课程，可永久免费阅读
 
 > 私信我微信 **icanmeetu**，获得折扣
+
+```js
+const lorem = ipsum(dolor, sit)
+// !callout[/amet/] This is a callout
+const [amet, consectetur] = [0, 0]
+lorem.adipiscing((sed, elit) => {
+  if (sed) {
+    amet += elit
+  }
+})
+```
 
 
 ![](https://files.mdnice.com/user/3925/8a37a213-639b-46a2-a4ab-b18fbcfd6a0d.png)
@@ -75,5 +125,28 @@
 
 
 
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer lectus elit, tincidunt consectetur auctor ac, dignissim eget dolor. Integer magna ante, dictum ut posuere sed, faucibus quis risus.
 
+Phasellus id dolor lacinia, commodo nisl non, condimentum ante. Nam diam augue, tempor quis condimentum eget, luctus vitae felis. Aenean maximus ultrices massa ac viverra. Nullam tellus enim, tincidunt ac ligula eu, placerat vulputate justo. Vivamus non dui malesuada, mattis dolor vitae, aliquam ipsum. Sed dapibus nibh nisi, sit amet consectetur sapien scelerisque at.
 
+## steps A Game of Thrones
+
+A Game of Thrones is the first book in the A Song of Ice and Fire series by George R.R. Martin. Set in a world where seasons last for years, it introduces a complex plot and a wide cast of characters, ranging from noble families vying for the Iron Throne to the supernatural threats in the North.
+
+```js
+const houses = [
+  "Stark",
+  "Lannister",
+  "Baratheon",
+  "Targaryen",
+]
+
+const winner =
+  houses[
+    Math.floor(
+      Math.random() * houses.length,
+    )
+  ]
+
+console.log(`Iron Throne: ${winner}`)
+```
