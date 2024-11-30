@@ -1,11 +1,10 @@
 import Intro from './intro.mdx'
+import PostLayout from "@/components/PostLayout";
 
 export default function Page() {
   return (
-    <div>
-      <div className='keep max-w-3xl mx-auto px-6'>
-        <Intro />
-      </div>
-    </div>
+    <PostLayout>
+      <Intro />
+    </PostLayout>
   )
 }

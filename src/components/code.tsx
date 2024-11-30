@@ -67,7 +67,7 @@ export function HighCode({highlighted, className, style, extraHandlers = []}: Hi
     return (
       <div
         className={cn("border border-editorGroup-border rounded overflow-hidden my-2", className)}
-        style={{"--border-color": "var(--ch-23)", borderColor: "var(--border-color)", ...style,} as any}
+        style={{"--border-color": "var(--ch-23)", borderColor: "var(--border-color)", backgroundColor: "var(--ch-code-bg)", ...style,} as any}
       >
         <div
           className="px-3 py-2 border-b border-editorGroup-border bg-editorGroupHeader-tabsBackground text-sm text-tab-activeForeground flex"

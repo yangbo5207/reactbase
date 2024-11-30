@@ -145,7 +145,17 @@
 /*}*/
 
 .keep {
-  @apply overflow-x-auto;
+  @apply max-w-6xl mx-auto px-6 relative flex flex-row items-baseline;
+  .content {
+    flex: 1;
+    width: 0;
+  }
+  .nav {
+    @apply top-28 hidden md:block;
+    width: 16rem;
+    position: sticky;
+    margin-left: 2rem;
+  }
   p, li {
     @apply text-[15px] leading-7 tracking-wider my-5;
     color: var(--ch-4);
@@ -164,15 +174,26 @@
     @apply underline text-blue-700;
   }
   
+  h1, h2, h3, h4, h5, h6 {
+    @apply scroll-mt-20;
+  }
+  
   h1 {
-    @apply my-10 font-bold text-2xl
+    @apply my-10 font-bold text-2xl;
   }
   h2 {
-    @apply my-12 font-bold text-lg
+    @apply my-12 font-bold text-lg;
   }
   h2 + p:has(> strong) {
     @apply text-green-600 mt-0 text-center mb-10;
     color: orangered;
+  }
+  
+  h2#table-of-contents {
+    display: none;
+  }
+  h2#table-of-contents + ul {
+    display: none;
   }
   
   h3 {
@@ -187,6 +208,13 @@
   blockquote:before {
     @apply content-['i'] w-5 h-5 text-background flex items-center justify-center rounded-full mt-4;
     background-color: var(--ch-28);
+  }
+  
+  .headings li {
+    @apply my-1 text-gray-500;
+  }
+  .headings li.active {
+    color: var(--ch-7);
   }
   
   hr {
@@ -218,12 +246,14 @@ html {
   --ch-20: #155e75;
   --ch-21: #2563eb;
   --ch-22: #171717;
-  --ch-23: #404040;
+  /*--ch-23: #404040;*/
+  --ch-23: rgb(51,65,85);
   --ch-24: #6b7280;
   --ch-25: #6b728066;
   --ch-26: #171717e6;
-  --ch-27: rgb(16, 9, 0);
+  --ch-27: #ffffff19;
   --ch-28: rgb(196 125 9);
+  --ch-code-bg: rgba(30, 41, 59, 0.6);
 }
 
 html.light {
@@ -256,4 +286,5 @@ html.light {
   --ch-26: #ffffffe6;
   --ch-27: rgb(239 246 255);
   --ch-28: rgb(59 130 246);
+  --ch-code-bg: #fafafa;
 }
