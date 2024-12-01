@@ -2,23 +2,23 @@ import { BookOpen, Bot, Settings2, SquareTerminal} from "lucide-react"
 
 const router = [
   {
-    title: "NextJS 基础",
+    title: "基础",
     url: "",
     icon: SquareTerminal,
     isActive: true,
     items: [
       {
-        title: "序",
-        url: "/next/history",
+        title: "Next.js 发展前景",
+        url: "/",
       },
       {
-        title: "服务端渲染",
-        url: "/next/browser",
+        title: "理解服务端渲染",
+        url: "/next/1ssr",
       },
       {
-        title: "客户端渲染",
-        url: "/next/client",
-      },
+        title: "同构",
+        url: "/next/2isomorphism",
+      }
     ],
   },
   {
