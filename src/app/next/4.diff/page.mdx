@@ -1,0 +1,180 @@
+import {CodeTabs} from "../../../components/code-with-tabs";
+
+## Table of contents
+
+## 目标：做好服务端逻辑解耦
+
+RSC 是 Next.js 的核心要素。要用好 Next.js，就要求我们必须对 RSC 有足够的掌握。而掌握 RSC 的核心关键是要善于把服务端逻辑从你的开发逻辑中合理的解耦出来。而这个解耦思路，与 React 最佳性能编写方式几乎一模一样。
+
+<CodeTabs>
+
+```js !!tabs main.js -c
+function lorem(ipsum, dolor = 1) {
+  const sit = ipsum == null ? 0 : ipsum.sit
+  dolor = sit - amet(dolor)
+  return sit ? consectetur(ipsum) : []
+}
+```
+
+```css !!tabs styles.css
+body {
+  margin: 0;
+  padding: 0;
+}
+```
+
+</CodeTabs>
+
+在 RSC 中，服务端逻辑仅执行一次，包含动态交互的才会重复执行。
+
+在最佳性能优化中，不变的组件仅执行一次，需要变化的才会重新执行。
+
+因此，为了让大家能够更加轻松的掌握 RSC，本专栏额外设计了几章内容，用于为大家分享如何在 React 中，充分利用 diff 的命中规则，编写出性能最好的 React 的代码。我们的目标是做到只有更新的节点部分，才会重新 `rerender`，但是，在代码中，我们几乎不会添加 `useCallback/useMemo/memo` 这样的性能优化 API。
+
+## 虚拟 DOM 、 Fiber 、真实 DOM
+
+在 React 的原理体系中，有三种和元素有关的对象，虚拟 DOM 对象，Fiber 对象，与真实 DOM 对象。非常容易被初学者混淆。
+
+**虚拟 DOM 对象**指的是由 JSX 语法编译而言的对象。
+
+在编写代码时，我们一个普通的 div，在 JSX 编译之后，会变成如下的对象结构
+
+```tsx helox.tsx -c
+// 编译之前
+<div className='secondary'>Github</div>
+
+// 编译之后
+{
+  $$typeof: Symbol(react.transitional.element),
+  key: null,
+  props: { className: 'secondary', children: 'Github' },
+  type: 'div',
+  _owner: FiberNode,
+  ref: null
+}
+```
+
+在 React 源码中，他的元素类型是 `ReactElement`，这个知识点对我们阅读源码非常有帮助。例如在方法 `reconcileSingleElement` 中，我们就可以很容易辨别出来，这里是传入一个虚拟 DOM 对象，返回一个 Fiber 节点对象。
+
+```jsx ReactChildFiber.js
+function reconcileSingleElement(
+  returnFiber: Fiber,
+  currentFirstChild: Fiber | null,
+  // !focus(1:1)
+  element: ReactElement,
+  lanes: Lanes,
+): Fiber {
+  ...
+}
+```
+
+Fiber 对象是基于 虚拟 DOM 创建的**运行时上下文**对象。它除了包含了节点本身都静态属性之外，还包括
+
++ 构建 Fiber 树的指针
++ 存储 props、state、effect 等动态状态的字段
++ 记录更新优先级的字段
+
+```tsx
+function FiberNode(tag: WorkTag, pendingProps: mixed, key: null | string, mode: TypeOfMode) {
+  // 静态数据结构
+  this.tag = tag;
+  this.key = key;
+  this.elementType = null;
+  this.type = null;
+  this.stateNode = null; // 指向真实 DOM 对象
+
+  // 构建 Fiber 树的指针
+  this.return = null;
+  this.child = null;
+  this.sibling = null;
+  this.index = 0;
+
+  this.ref = null;
+
+  // 存储更新与状态
+  this.pendingProps = pendingProps;
+  this.memoizedProps = null;
+  this.updateQueue = null;
+  this.memoizedState = null;
+  this.dependencies = null;
+  this.mode = mode;
+
+  // 存储副作用回调
+  this.effectTag = NoEffect;
+  this.nextEffect = null;
+  this.firstEffect = null;
+  this.lastEffect = null;
+
+  // 优先级
+  this.lanes = NoLanes;
+  this.childLanes = NoLanes;
+
+  // 复用节点
+  this.alternate = null;
+}
+```
+
+关于 Fiber 结构更详细的解读，可以在《React 知命境》[详细解读 Fiber 节点的每一个属性含义](https://mp.weixin.qq.com/s/4bSZVcm1Gcq9y6tB8uhc7A)一文中学习。
+
+真实 DOM 对象则是在 `completeWork` 过程中通过浏览器的 API `document.createElement` 创建的 DOM 节点。
+
+```ts ReactDOMHostConfig.js
+const domElement: Instance = createElement(
+  type,
+  props,
+  rootContainerInstance,
+  parentNamespace,
+);
+```
+
+为了跨平台兼容性的考虑，该方法对外暴露的是 `createInstance`，我们可以在自定义的 HostConfig 中改写它。
+
+```tsx ReactFiberCompleteWork.js
+const instance = createInstance(
+  type,
+  newProps,
+  rootContainerInstance,
+  currentHostContext,
+  workInProgress,
+);
+
+appendAllChildren(instance, workInProgress, false, false);
+
+workInProgress.stateNode = instance;
+```
+
+需要注意的是，刚开始创建的真实 DOM 对象，并不是创建好之后，就第一时间就插入到了 DOM 树中交给浏览器渲染，而是在内存中构建好了一颗完整的**离屏DOM 树**之后，在 `commit` 阶段整体插入到 DOM 中。
+
+
+## Diff 的比较流程和规则
+
+你可以通过这一篇文章，了解 diff 算法在源码中的体现，[React Diff 算法的源码应该怎么读](https://mp.weixin.qq.com/s/LSdQ9Ahr63sSijEqcup5CQ)。这里仅仅只表诉结论。
+
+在 React 的 diff 规则中，我们会优先使用 `state、props、context` 是否发生了变化来判断当前组件是否处于一个稳定的状态，如果这些都没有发生变化，那么在考虑子组件是否能够复用时，就会只考虑子组件的 state 与 context 是否发生了变化，而不再比较 props 的变化。这个规则对于我们构建高性能的 React 项目至关重要，一定要确保自己完全理解到位。
+
+例如下面这个例子，Personal 内部是一个非常稳定的状态，那么判断 `Header` 是否会 `rerender` 时，就只考虑 Header 内部的 state 与 context 是否发生变化。
+
+```js
+function Personal() {
+  return (
+    <div>
+      <Header />
+      <Content />
+    </div>
+  )
+}
+```
+
+如果 Header 中没有任何状态变化，那么此时 Header 会被复用，而不会 `rerender`
+
+```js
+function Header() {
+  return (
+    <header>...</header>
+  )
+}
+```
+
+为了强化大家对该知识点的掌握，在后续的几篇文章中，我会用几个案例来演示不同的情况下我们应该怎么做，如何构建一个始终稳定的主要代码结构。
+
+

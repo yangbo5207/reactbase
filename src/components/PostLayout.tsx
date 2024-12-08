@@ -21,7 +21,6 @@ export default function PostLayout({children}: {children: ReactNode}) {
 
     ul.children[0].classList.add('active')
 
-
     h2.innerText = '目录'
 
     nav.current.appendChild(h2)
@@ -32,7 +31,6 @@ export default function PostLayout({children}: {children: ReactNode}) {
       const element = document.getElementById(decodeURIComponent(id))
       const observer = new IntersectionObserver(entries => {
         if (entries[0].intersectionRatio > 0) {
-          console.log(entries[0].target)
           ul.children[index.current].classList.remove('active')
           child.classList.add('active')
           index.current = i

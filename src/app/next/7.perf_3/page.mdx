@@ -1,0 +1,120 @@
+import {CodeTabs} from "../../../components/code-with-tabs";
+import Preview1 from './before/preview'
+import Preview2 from './after/preview'
+import Preview3 from './end/preview'
+
+## Table of contents
+
+## 性能优化场景三
+
+<Preview1 />
+
+注意看这个演示案例。我们把边框加粗。然后新增了三个 `Slider` 组件来共同控制边框的颜色变化。
+
+如果仅按照之前的优化思路，我们可以将共同逻辑抽离到一个 `Container` 组件中，来确保 `Child` 的组件不会 rerender.
+
+<CodeTabs>
+```js !!tabs index.tsx -c
+!from ./before/index.tsx
+```
+
+```js !!tabs container.tsx -c
+!from ./before/container.tsx
+```
+
+```css !!tabs child.tsx -c
+!from ./before/child.tsx
+```
+</CodeTabs>
+
+但是此时的问题，在 `Container` 组件中的 `Slider` 组件，在 `state` 变化时，发生了大量的冗余 `rerender`。注意观察 `console.log` 演示的过程中打印结果呈三倍输出。冗余非常夸张。
+
+
+
+## 优化思路
+
+我们能不能用同样的思维嵌套去优化这个 `Contianer` 组件？我们尝试一下。
+
+我们把变化的内容单独封装成为一个组件，然后也单独封装一个新的容器节点 `Wrapper`，然后让 Container 组件变成一个稳定的结构。状态下方之后的代码结果如下
+
+```tsx
+export default function Container({children}: PropsWithChildren) {
+  return (
+    <Wrapper>
+      <SliderR />
+      <SliderG />
+      <SliderB />
+      {children}
+    </Wrapper>
+  )
+}
+```
+
+但是此时的一个问题是，多个组件之间存在共享状态。为了解决这个共享状态的问题，我们不得不进一步引入 `context` 来管理状态，于是代码就演变成如下的结果。
+
+完整代码如下
+
+<CodeTabs>
+```js !!tabs index.tsx -c
+!from ./after/index.tsx
+```
+
+```js !!tabs context.tsx -c
+!from ./after/context.tsx
+```
+
+```js !!tabs container.tsx -c
+!from ./after/container.tsx
+```
+
+```css !!tabs child.tsx -c
+!from ./after/child.tsx
+```
+</CodeTabs>
+
+运行效果如下
+
+<Preview2 />
+
+很可惜的是，我们发现 `Slider` 组件的大量冗余 rerender 并没有被解决。这是因为 react 的 `context` 比较结果总是为 false，因此组件始终无法拥有一个稳定的外部环境。
+
+我们需要一个方案，又能满足多个组件状态共享，又不会引发必要的 `rerender`，这个方案是 `zustand`
+
+> 理论上来说，其他的状态管理库都会解决这个问题
+
+## 引入 zustand
+
+`zustand` 底层并未基于 `Context` 来实现，他是基于一套自定义的**发布订阅模式**来实现。因此，他可以有机会绕开 React 本身的更新机制，通过通知的方式让对应的状态发生变化。关于这个更新机制的详细了解，大家可以通过阅读《React 知命境》来学习。
+
+
+<CodeTabs>
+```js !!tabs index.tsx -c
+!from ./end/index.tsx
+```
+
+```js !!tabs store.tsx -c
+!from ./end/store.tsx
+```
+
+```js !!tabs container.tsx -c
+!from ./end/container.tsx
+```
+
+```css !!tabs SliderR.tsx -c
+!from ./end/sliderR.tsx
+```
+
+```css !!tabs SliderG.tsx -c
+!from ./end/sliderG.tsx
+```
+
+```css !!tabs SliderB.tsx -c
+!from ./end/sliderB.tsx
+```
+</CodeTabs>
+
+> 空间有限，本案例的 `child.tsx` 并未展示，可以通过上面的案例查看，代码完全一致
+
+演示效果如下，我们惊奇的发现，`Slider` 的冗余 rerender 全部消失了，一次 `rerender` 都没有发生。
+
+<Preview3 />

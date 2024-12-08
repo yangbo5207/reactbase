@@ -22,7 +22,7 @@ const nextConfig = {
       static: 180, // 静态，或者 Link 的 prefetch 为 true
     },
   },
-  reactStrictMode: true
+  reactStrictMode: false
 };
 
 const autolinkHeadingOptions = {

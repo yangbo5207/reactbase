@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils"
 import { callout } from "./annotations/callout"
 import {mark} from './annotations/mark'
 import { diff } from "./annotations/diff"
+import { focus } from "./annotations/focus"
 import { CodeIcon } from "./annotations/icons"
 import {CopyButton} from './annotations/copy-button'
 import theme from "@/theme.mjs"
@@ -16,96 +17,76 @@ export async function InlineCode({ codeblock }: { codeblock: RawCode }) {
   )
 }
 
-export async function Code({
-  codeblock,
-  ...rest
-}: {
+type CodePorps = {
   codeblock: RawCode
-  className?: string
-  style?: React.CSSProperties
-  extraHandlers?: AnnotationHandler[]
-}) {
-  const { flags } = extractFlags(codeblock)
-  const highlighted = await highlight(codeblock, theme, {
-    annotationPrefix: flags.includes("p") ? "!!" : undefined,
-  })
-  return <HighCode highlighted={highlighted} {...rest} />
 }
 
-type HighCodePorps = {
-  highlighted: HighlightedCode,
-  className?: string,
-  style?: React.CSSProperties,
-  extraHandlers?: AnnotationHandler[]
+export function Code({codeblock}: CodePorps) {
+  return (
+    <div
+      className={"border rounded overflow-hidden my-2 border-gray-200 dark:border-gray-700"}
+      style={{backgroundColor: "var(--ch-code-bg)",} as any}
+    >
+      <CodeHeader {...codeblock} />
+      <Auth>
+        <CodeSimple codeblock={codeblock} />
+      </Auth>
+    </div>
+  )
 }
 
-export function HighCode({highlighted, className, style, extraHandlers = []}: HighCodePorps) {
-  const {title, flags, lang} = extractFlags(highlighted)
-  const h = {...highlighted, meta: title}
+export async function CodeSimple({codeblock}: {codeblock: RawCode}) {
+  const highlighted = await highlight(codeblock, theme, {})
+  const handlers = [mark, diff, callout, focus]
 
-  const handlers = [
-    ...extraHandlers,
-    mark,
-    diff,
-    callout,
-  ].filter(Boolean) as AnnotationHandler[]
+  const {flags} = extractFlags(codeblock.meta)
 
-  const pre = (
-    <Auth>
+  return (
+    <div className='code-simple'>
+      {flags.includes("-c") && (
+        <CopyButton text={codeblock.value} className="ml-auto" />
+      )}
       <Pre
         code={highlighted}
-        className="m-0 py-2 px-0 bg-editor-background rounded-none group flex-1 selection:bg-editor-selectionBackground"
+        className="m-0 py-2 px-0 rounded-none group selection:bg-editor-selectionBackground"
         handlers={handlers}
         style={{
-          backgroundColor: "var(--bg-color)",
+          backgroundColor: "var(--ch-code-bg)",
         }}
       />
-    </Auth>
+    </div>
   )
-
-  if (title || lang) {
-    return (
-      <div
-        className={cn("border border-editorGroup-border rounded overflow-hidden my-2", className)}
-        style={{"--border-color": "var(--ch-23)", borderColor: "var(--border-color)", backgroundColor: "var(--ch-code-bg)", ...style,} as any}
-      >
-        <div
-          className="px-3 py-2 border-b border-editorGroup-border bg-editorGroupHeader-tabsBackground text-sm text-tab-activeForeground flex"
-          style={{ borderColor: "var(--border-color)" }}
-        >
-          <div className="text-tab-activeForeground text-sm flex items-center gap-3">
-            <CodeIcon title={title} lang={`.${lang}`} />
-            <span>{title}</span>
-          </div>
-          {flags.includes("-c") && (
-            <CopyButton text={h.code} className="ml-auto" />
-          )}
-        </div>
-        {pre}
-      </div>
-    )
-  } else {
-    return (
-      <div
-        className={cn("border border-editorGroup-border rounded overflow-hidden my-2 relative", className,)}
-        style={{"--border-color": "var(--ch-23)", borderColor: "var(--border-color)", ...style,} as any}
-      >
-        {flags.includes("-c") && (
-          <CopyButton text={h.code} className="absolute right-4 my-0 top-2" />
-        )}
-        {pre}
-      </div>
-    )
-  }
 }
 
-export function extractFlags(codeblock: RawCode) {
-  const tags = codeblock.meta.split(' ')
+export function CodeHeader({lang = '', meta = '', value}: RawCode) {
+  const {title, flags} = extractFlags(meta)
+
+  if (!title) return null
+
+  return (
+    <div className='header px-3 py-3 text-sm border-b border-gray-200 dark:border-gray-700' style={{ backgroundColor: 'var(--ch-code-header-bg)'} as any}>
+      <CodeTitle meta={meta} />
+    </div>
+  )
+}
+
+export function CodeTitle({meta = ''}: {meta: string}) {
+  const {title} = extractFlags(meta)
+  return (
+    <div className="text-tab-activeForeground flex items-center gap-3">
+      {title && <CodeIcon title={title} />}
+      <span>{title}</span>
+    </div>
+  )
+}
+
+export function extractFlags(meta: string) {
+  const tags = meta.split(' ')
   // 并且以 - 开头的标记
   const flags = tags.filter((flag) => flag.startsWith("-")) ?? ""
 
   // 以 .md 这种格式结尾的，第一个元素
   const title = tags.filter((tag) => tag.includes('.'))[0]
 
-  return { title, flags, lang: codeblock.lang }
+  return { title, flags }
 }

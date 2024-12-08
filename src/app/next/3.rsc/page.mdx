@@ -1,0 +1,119 @@
+## Table of contents
+
+## 同构面临的挑战
+
+同构渲染虽然解决了前后端开发一致性的问题，但是依然存在不小的挑战。这里主要的原因是，当组件在服务端运行时，运行环境是 node.js，当组件在客户端运行时，运行环境是浏览器中的 JS 引擎。运行环境的差异会导致许多 API 无法同时满足在两端运行。
+
+例如 `localStorage` 只能在客户端运行，而无法在服务端运行。
+
+例如，在服务端发请求，与在客户端发请求的底层 API 也会不一样。
+
+有的差异可以通过封装来磨平，达到使用的一致性，有的就做不到。
+
+除此之外，有的逻辑可以**仅仅只在服务端执行**。那么相关逻辑的三方依赖包，就完全没必要打包到客户端。如果依然是同构渲染的逻辑，这些打包到客户端的三方依赖，就是**冗余的体积**。因此，在同构渲染的发展过程中，我们慢慢的发现，将服务端组件与客户端组件区分开，变成了一个刚性需求。React Server Component 就是在这个基础之上，演变出来的解决方案。
+
+
+## RSC
+
+React Server Component 简称 RSC，和同构组件最大的区别在于，他要求开发者**在开发中就将客户端组件与服务端组件严格区分开**。把服务端组件从同构组件中拆离出来，让服务端组件只在服务端运行，是 RSC 的核心理念之一。
+
+在 Next.js 中，我们可以使用 `use server` 前缀，来表示该组件为一个服务端组件。
+
+```tsx
+// !focus(1:1)
+'use server'
+
+export default async function Page() {
+  let data = await fetch('https://api.vercel.app/blog')
+  let posts = await data.json()
+  return (
+    <ul>
+      {posts.map((post) => (
+        <li key={post.id}>{post.title}</li>
+      ))}
+    </ul>
+  )
+}
+```
+
+使用 `use client` 前缀，来表示该组件为一个客户端组件
+
+```ts
+// !focus(1:1)
+'use client'
+
+import Link from 'next/link';
+import { useState, useEffect } from 'react';
+
+const MdxHeading = ({ h, id, ...rest }: {h: string, id: string}) => {
+  const [hasMounted, setHasMounted] = useState(false);
+  const VariableHeader = h;
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+  return <h1 {...rest} />;
+};
+```
+
+**在应用开发的层面**，Next.js 不再强调同构组件，每一个组件都必须是明确的 `use server` 或者 `use client`.
+
+默认情况下，如果我们不加前缀，那么该组件则表示为一个服务端组件。
+
+当我们把仅在服务端运行的组件，单独独立出来之后，带来的好处是显而易见。
+
+**1、客户端的打包体积大幅度减小**
+
+服务端组件仅在服务端运行，因此他所依赖的所有三方包和本身的代码，都可以不发送到客户端。也就意味着，最终打包的代码体积将会大幅度减小。例如你当前浏览的这个网站项目，完整的包大小，在 gzip 之后大概在 1M 左右，但是由于使用了 RSC 构建，最终的打包产出总体积只有不到 100KB。打包体积减小了整整 900KB 左右。
+
+```ts build结果.terminal
+Route (app)                              Size     First Load JS
+┌ ○ /                                    4.35 kB         152 kB
+├ ○ /_not-found                          147 B          99.4 kB
+├ ○ /next                                147 B          99.4 kB
+├ ○ /next/1.ssr                          2.82 kB         147 kB
+├ ○ /next/2.isomorphism                  2.82 kB         147 kB
+├ ○ /next/3.rsc                          2.82 kB         147 kB
+├ ○ /react                               147 B          99.4 kB
+└ ○ /rn                                  147 B          99.4 kB
+// !focus(1:4)
++ First Load JS shared by all            99.2 kB
+  ├ chunks/215-319cb6c4fa92d97f.js       44.6 kB
+  ├ chunks/4bd1b696-9a8bfc82401e0b67.js  52.6 kB
+  └ other shared chunks (total)          1.95 kB
+```
+
+得益于 RSC 的机制，我可以自由的控制让繁重的逻辑仅在服务端执行，而在客户端仅仅只处理前端交互的部分。这样就可以有效的控制浏览器中访问的包体积大小。
+
+**2、直接访问服务器资源**
+
+由于服务端组件可以非常明确的仅在服务端运行，因此我们可以非常放心的在组件中直接访问服务器的资源、包括文件、数据库、其他服务器等。并且由于服务端更靠近数据源，和在客户端处理相比，服务端的处理效率都将得到很大的提高。最终我们只需要将处理结果发送给服务端即可。
+
+**3、安全性得到极大的提高**
+
+同构组件由于也需要在客户端运行，因此会直接暴露在客户端，安全性上面是存在一定的风险的。但是服务端组件仅在服务器运行，那么一些敏感的数据我们就可以非常放心的直接使用，例如一些密钥等
+
+```ts
+import {createServerClient} from '@supabase/ssr'
+import {cookies} from 'next/headers'
+
+// !focus(1:2)
+const supabaseURL = process.env.NEXT_PUBLIC_SUPABASE_URL as string
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string
+
+export async function createClient() {
+  ...
+}
+```
+
+当然，在此基础之上，Next.js 围绕 RSC 还做了非常有意思的优化，例如客户端组件与服务端组件的混合开发，数据的流式传输等，我们将在后续的章节一一学习。
+
+## 掌握 RSC 的挑战
+
+从网站结果上来说，RSC 具备非常多令人心动的特性，但是，从开发者使用的角度来说，RSC 则在某种程度上来说，提高了使用者的学习难度。要用好 RSC 并不是一件简单的事情。RSC 要求开发者能准确的按照逻辑区分仅能在服务端运行的组件，这个事情对于大多数开发者而言，都是有难度。
+
+因此，目前的现状是，有相当一部分使用者无法把服务端逻辑从自己的代码中解耦出来，从而导致了项目中全都是 `use client` 的情况出现。这也是使用者对 Next.js 褒贬不一的原因。不过很显然，现在主流的服务端渲染框架都已经支持、或者计划支持与 RSC 类似的理念，将服务端组件独立出来是未来的发展趋势。
+
+不过大家也不用担心，在后面的章节中，我会专门针对逻辑拆分做详细的解读。
+
+
+

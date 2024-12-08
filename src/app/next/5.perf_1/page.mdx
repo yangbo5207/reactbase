@@ -1,0 +1,64 @@
+import {CodeTabs} from "../../../components/code-with-tabs";
+import Preview1 from './before/preview'
+import Preview2 from './after/preview'
+
+## Table of contents
+
+## 场景
+
+<Preview1 />
+
+现在我们看一下这个演示案例. 主要是功能包括两个部分，一个是 `count` 的显示与相关的交互，另外是一个发版信息展示的独立模块 `Child`。
+
+从结果上来说，当 `count` 改变时，由于逻辑上跟 `Child` 模块无关，因此，Child 模块不应该 rerender。
+
+但是，根据布局特性，我们的代码会像如下这样写
+
+<CodeTabs>
+```js !!tabs index.tsx -c
+!from ./before/index.tsx
+```
+
+```css !!tabs child.tsx -c
+!from ./before/child.tsx
+```
+</CodeTabs>
+
+我在 `Child` 模块中通过打印提示警告来显示该组件是否被 `rerender`
+
+_`console.warn('__ child component rendered!')`_
+
+大家可以在演示的时候，在开发者工具中查看。
+
+演示结果发现，这样的代码写法，每次 count 发生变化，`Child` 都被更新了。很明显这种写法是不符合我们的预期，那么我们要分析一下，为什么会这样。
+
+在 diff 中，我们要判断一个组件是否会被复用，首先会先比较上一个节点的 `state/props/context` 是否发生了变化。很明显，`Child` 的上一个节点中，`state` 发生了变化，因此 `Child` 发生了 rerender。
+
+
+## 优化
+
+那么改造方案就是，我们可以让状态变化相关的逻辑，单独下方到一个子组件中去，**让该子组件在 Fiber tree 中，成为一个叶子节点**，他就可以不再影响到别的无关节点。写法如下。
+
+<CodeTabs>
+  ```js !!tabs index.tsx -c
+  !from ./after/index.tsx
+  ```
+
+  ```js !!tabs count.tsx -c
+  !from ./after/count.tsx
+  ```
+
+  ```css !!tabs child.tsx -c
+  !from ./after/child.tsx
+  ```
+</CodeTabs>
+
+演示效果如下，验证一下，发现 `Child` 不再 rerender，成功被复用
+
+<Preview2 />
+
+```js fiber.tree
+Demo
+ - Count 该节点为叶子节点，包含了状态变化，只影响自己
+ - Child
+```

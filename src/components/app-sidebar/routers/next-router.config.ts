@@ -13,11 +13,31 @@ const router = [
       },
       {
         title: "理解服务端渲染",
-        url: "/next/1ssr",
+        url: "/next/1.ssr",
       },
       {
         title: "同构",
-        url: "/next/2isomorphism",
+        url: "/next/2.isomorphism",
+      },
+      {
+        title: "RSC 理念",
+        url: "/next/3.rsc",
+      },
+      {
+        title: "React Fiber Diff 流程",
+        url: "/next/4.diff",
+      },
+      {
+        title: "性能优化案例一",
+        url: "/next/5.perf_1",
+      },
+      {
+        title: "性能优化案例二",
+        url: "/next/6.perf_2",
+      },
+      {
+        title: "性能优化案例三",
+        url: "/next/7.perf_3",
       }
     ],
   },
