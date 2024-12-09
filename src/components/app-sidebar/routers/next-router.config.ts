@@ -35,6 +35,7 @@ const router = [
       {title: "性能优化案例三", url: "/next/7.perf_3"},
       {title: "创建 NextJS 项目", url: "/next/8.rsc_1"},
       {title: "RSC 案例一", url: "/next/9.rsc_2"},
+      {title: "RSC 案例二", url: "/next/10.rsc_3"},
     ],
   },
   {

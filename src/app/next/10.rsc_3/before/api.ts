@@ -29,7 +29,7 @@ export async function incrementLikeCount(article: string, num: number) {
       return error
     }
     return {message: '操作成功', like_count: count}
-  // 3. 如果没有记录，插入新记录并设置 like_count = 1
+    // 3. 如果没有记录，插入新记录并设置 like_count = 1
   } else {
     const {data, error} = await next.insert({article: article, like_count: num})
     if (error) {

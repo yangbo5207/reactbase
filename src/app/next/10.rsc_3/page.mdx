@@ -1,0 +1,115 @@
+import Preview1 from './before/preview'
+import Preview2 from './after/preview'
+import {CodeTabs} from "@/components/code-with-tabs";
+
+## Table of contents
+
+
+## 异步组件
+
+在上一章文章中，我们使用了比较简单的场景来说明如何拆分服务端组件和客户端组件。这一篇文章，我们将要继续深化场景。
+
+我们知道，**点赞数量的初始化数据不会凭空而来**。那么这个初始化逻辑应该在哪里写呢？
+
+一种思路是当成传统的纯客户端逻辑来处理，先用默认值占位，然后在 useEffect 中请求接口。得到新数据后重新修改状态。演示效果如下。大家可以通过刷新页面和点击按钮观察。
+
+<Preview1 />
+
+完整代码如下
+
+<CodeTabs>
+```js !!tabs index.tsx -c
+!from ./before/index.tsx
+```
+
+```js !!tabs tooltip.tsx -c
+!from ./before/tooltip.tsx
+```
+
+```js !!tabs like.tsx -c
+!from ./before/like.tsx
+```
+
+```js !!tabs api.ts -c
+!from ./before/api.ts
+```
+</CodeTabs>
+
+## 消除 useEffect
+
+纯客户端组件有两个小问题。一个是在代码中，我们不得不借助 `useEffect` 来做初始化。另外一个就是第一时间显示的不是有效数据。因此，我们可以把初始化逻辑直接放到服务端，来优化掉这两个小问题。从而让用户体验和开发体验都提升一点。
+
+因此，我们要针对上面的案例进行一部分逻辑的改造。
+
+首先，把 `tooltip.tsx` 调整成为一个服务端组件，在这个组件中，我们要在服务端从数据库中获取初始数据。
+
+```tsx tooltip.tsx
+import {MessageCircleCode, FolderPlus, Twitter, TvMinimalPlay} from 'lucide-react'
+import {Button} from '@/components/ui/button'
+import Like from './like'
+import {getLikeCount} from "./apis";
+
+export default async function Tooltip() {
+  const like_count = await getLikeCount('helox')
+  return (
+    <div className='flex justify-between border-t pt-4'>
+      <div>
+        <Like like={like_count} />
+        <Button variant='ghost'>
+          <MessageCircleCode />
+          <span>101</span>
+        </Button>
+      </div>
+      <div>
+        <Button variant='ghost' size='icon'>
+          <FolderPlus />
+        </Button>
+        <Button variant='ghost' size='icon'>
+          <TvMinimalPlay />
+        </Button>
+        <Button variant='ghost' size='icon'>
+          <Twitter />
+        </Button>
+      </div>
+    </div>
+  )
+}
+```
+
+然后单独将 Like 设置为一个末尾节点的客户端组件。这里注意 Like 组件的 props。接收的默认值是从服务端组件初始化好了之后传递下来的。
+
+除此之外，`api` 的逻辑我们也要进行区分，分开处理客户端请求和服务端请求，这里不要写在同一个模块中，而是分成两个模块单独处理。完整代码如下
+
+完整代码如下
+
+<CodeTabs>
+  ```js !!tabs index.tsx -c
+  !from ./after/index.tsx
+  ```
+
+  ```js !!tabs tooltip.tsx -c
+  !from ./after/tooltip.tsx
+  ```
+
+  ```js !!tabs like.tsx -c
+  !from ./after/like.tsx
+  ```
+
+  ```js !!tabs apis.ts -c
+  !from ./after/apis.ts
+  ```
+
+  ```js !!tabs apic.ts -c
+  !from ./after/apic.ts
+  ```
+</CodeTabs>
+
+演示效果如下所示
+
+<Preview2 />
+
+这里，一个在服务端初始化，在客户端持续更新的组件，就这样完成了。
+
+结合代码认真感受一下，这就是服务端渲染的魅力。
+
+`Tooltip` 组件由于是一个稳定的性能优化结构，因此他在整个更新的过程中，仅仅只会在初始化时执行一次，因此，无论更新多少次，他后续都不会 `rerender`，所以这种写法不仅符合 RSC，也符合性能优化的规则。这个结构的抽象和调整也是我们在学习的过程中，要反复感受的东西。这对于提升我们的代码质量和代码性能都有非常大的帮助。
