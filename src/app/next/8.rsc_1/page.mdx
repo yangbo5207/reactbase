@@ -1,0 +1,82 @@
+## Table of contents
+
+## 梗概
+
+RSC 要求我们在开发中，严格区分服务端逻辑与客户端逻辑。这和我们之前对性能优化的场景要求所需要的拆分思路一模一样。在过去，这种拆分思路被认为是一种**艰难的、容易被破坏的、不稳定的**结构，因此很少有人往这方面思考。但是随着开发经验的增加，我发现要做到也并非难事。RSC 的出现也更加佐证了我的想法。
+
+在 RSC 中，我们可以把**仅需要渲染一次**的功能逻辑抽象成服务端组件，把可能需要多次渲染的功能逻辑抽象成客户端组件。把初始化逻辑成服务端组件，把更新逻辑抽象成客户端组件。
+
+为了让大家能够彻底掌握这种方式，我在后续的文章中提供了几个案例，大家可以反复观察揣摩，直到彻底掌握为止。
+
+> 如果无法掌握这个拆分能力，那么你的 Next.js 一定用不好，所以这个重中之重的前置逻辑，我们需要在学习之前就掌握它。
+
+
+## 创建一个 Next.js 项目
+
+
+我们使用 `create-next-app` 创建一个新的 Nextjs 项目。
+
+```bash 终端.terminal -c
+npx create-next-app@latest
+```
+
+以下的几个选项全部都选择 `yes`
+
+```bash
+Need to install the following packages:
+create-next-app@15.0.4
+Ok to proceed? (y)
+```
+
+```bash
+? What is your project named? › my-app
+? Would you like to use TypeScript? › No / Yes
+? Would you like to use ESLint? › No / Yes
+? Would you like to use Tailwind CSS? › No / Yes
+? Would you like your code inside a `src/` directory? › No / Yes
+? Would you like to use App Router? (recommended) › No / Yes
+? Would you like to use Turbopack for next dev? › No / Yes
+? Would you like to customize the import alias (@/* by default)? › No / Yes
+? What import alias would you like configured? › @/*
+```
+
+## shadcn/ui
+
+我们的项目中可能会使用到的 UI 库主要以 `shadcn/ui` 为主。
+
+首先执行如下指令初始化环境
+
+```bash -c
+npx shadcn@latest init
+```
+
+出现的选项，依次选择 `New York/Zinc/Yes`
+
+```ts
+✔ Which style would you like to use? › New York
+✔ Which color would you like to use as the base color? › Zinc
+✔ Would you like to use CSS variables for theming? … no / yes
+```
+
+`shadcn/ui` 是一个基于 `tailwindcss` 的组件库。他的理念和常规组件库有很大不同。我们在使用时，是通过单独引入使用的某一个组件的方式，例如，我们要使用其中的 `Button` 组件，那么，我就需要在终端中执行如下指令单独引入它
+
+```bash -c
+npx shadcn@latest add button
+```
+
+每个组件具体如何引入，可以在文档中查看，该指令执行之后，会将相关的代码直接拷贝到 `@/components/ui` 目录下
+
+在组件中使用时，我们就可以直接引入使用
+
+```ts
+// !focus(1:1)
+import { Button } from "@/components/ui/button"
+
+export default function Home() {
+  return (
+    <div>
+      <Button>Click me</Button>
+    </div>
+  )
+}
+```

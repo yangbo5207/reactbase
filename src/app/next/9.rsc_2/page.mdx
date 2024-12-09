@@ -1,0 +1,57 @@
+import Preview1 from './before/preview'
+import Preview2 from './after/preview'
+import {CodeTabs} from "@/components/code-with-tabs";
+
+## Table of contents
+
+
+## 文章内容与点赞
+
+通常一篇文章的内容只需要在初始化时渲染一次，但是点赞的数量会随着用户的点击在后续的过程中持续交互。我们可以将文章的内容设计为服务端渲染，刚好这些内容也对 SEO 有利。而将点赞按钮设计为客户端组件。
+
+案例演示如下。大家可以点击点赞按钮，我们会发现点赞数量会持续增加。
+
+<Preview1 />
+
+此时我们需要做的切割就是把不变的文章内容放到服务端处理，把可能会持续交互 update 的内容放到客户端处理，代码如下所示
+
+<CodeTabs>
+```js !!tabs index.tsx -c
+!from ./before/index.tsx
+```
+
+```js !!tabs tooltip.tsx -c
+!from ./before/tooltip.tsx
+```
+</CodeTabs>
+
+## `use client` 所代表的真实含义
+
+为了让脚手架识别到该组件为一个客户端组件，我们需要在模块的第一行加上 `use client` 前缀。但是需要注意的是，许多 Next.js 使用者对此产生误解，认为所有的客户端组件都应该加上 `use client` 前缀。
+
+实际上，`use client` 代表的是一种边界。当前节点使用了它之后，该节点后续的子节点，都会被认为是客户端组件，而不需要每一个都重复标记。
+
+例如，我们把本案例中的 `Tooltip` 组件在做一层拆分，将点赞按钮拆分到独立的子组件中去，代码演变如下
+
+
+<CodeTabs>
+```js !!tabs index.tsx -c
+!from ./after/index.tsx
+```
+
+```js !!tabs tooltip.tsx -c
+!from ./after/tooltip.tsx
+```
+
+```js !!tabs like.tsx -c
+!from ./after/like.tsx
+```
+</CodeTabs>
+
+注意观察，我们在 `tooltip.tsx` 中添加了 `use client`，但是在 `like.tsx` 中，并没有添加 `use client`，但是代码依然能够正常运行而没有报错。
+
+演示效果如下，可以正常运行。
+
+<Preview2 />
+
+所以一定要注意，`use client` 代表的是一种边界。这样我们就不会再页面中到处写 `use client` 了。
