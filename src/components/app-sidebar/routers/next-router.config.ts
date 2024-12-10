@@ -7,10 +7,8 @@ const router = [
     icon: SquareTerminal,
     isActive: true,
     items: [
-      {
-        title: "Next.js 发展前景",
-        url: "/",
-      },
+      { title: '激活码', url: '/next/0.auth' },
+      { title: "Next.js 发展前景", url: "/"},
       {
         title: "理解服务端渲染",
         url: "/next/1.ssr",

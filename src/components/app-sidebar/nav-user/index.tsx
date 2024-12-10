@@ -4,9 +4,6 @@ import {DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, 
 import {SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar,} from "@/components/ui/sidebar"
 import LoginButton from './login-button';
 import Userinfo from "./userinfo";
-import {getLoginInfor, Session} from "./api";
-import {useGlobal} from "@/components/global-provider";
-import {Button} from "@/components/ui/button";
 
 export default function Index() {
   const { isMobile } = useSidebar()

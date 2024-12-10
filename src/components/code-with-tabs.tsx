@@ -1,10 +1,10 @@
-import { Block, CodeBlock, parseProps } from "codehike/blocks"
-import { Pre, highlight, RawCode } from "codehike/code"
-import { z } from "zod"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Block, CodeBlock, parseProps } from 'codehike/blocks'
+import { highlight, RawCode } from 'codehike/code'
+import { z } from 'zod'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import theme from "@/theme.mjs"
 import {CodeSimple, extractFlags, CodeTitle} from './code'
-import {cn} from "@/lib/utils";
+import Auth from './Auth'
 
 const Schema = Block.extend({ tabs: z.array(CodeBlock) })
 
@@ -33,7 +33,7 @@ export async function CodeTabs(props: { tabs: RawCode[] }) {
         </div>
         {tabs.map((tab, i) => (
           <TabsContent key={tab.meta} value={tab.meta} className="mt-0">
-            <CodeSimple codeblock={tab} />
+            <Auth><CodeSimple codeblock={tab} /></Auth>
           </TabsContent>
         ))}
       </Tabs>

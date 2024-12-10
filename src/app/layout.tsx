@@ -1,8 +1,9 @@
 import './globals.css'
-import ClearError from './clearError';
-import {ThemeProvider} from "@/components/switch-themes";
+import ClearError from './clearError'
+import {ThemeProvider} from '@/components/switch-themes'
 import {GlobalProvider} from '@/components/global-provider'
-import {AppSidebar} from "@/components/app-sidebar";
+import {AppSidebar} from '@/components/app-sidebar'
+import {Toaster} from '@/components/ui/sonner'
 
 export const metadata = {
   title: '这波能反杀的付费课',
@@ -19,6 +20,7 @@ export default async function RootLayout({ children }: any) {
             <AppSidebar>{children}</AppSidebar>
           </GlobalProvider>
         </ThemeProvider>
+        <Toaster />
       </body>
     </html>
   )

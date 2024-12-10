@@ -4,7 +4,9 @@ import React, {createContext, useState, useEffect} from 'react'
 import {getLoginInfor, Session} from "@/components/app-sidebar/nav-user/api";
 
 type GlobalContextValue = {
-  session: Session | null
+  session: Session | null,
+  nextcode: string,
+  setNextCode: (code: string) => void,
 }
 
 type GlobalProviderProps = {
@@ -12,12 +14,17 @@ type GlobalProviderProps = {
 }
 
 // 用于存储登录信息等全局信息，部分信息在服务端获得，并通过 props 传入
-export const GlobalContext = createContext<GlobalContextValue>({session: null})
+export const GlobalContext = createContext<GlobalContextValue>({
+  session: null,
+  nextcode: '',
+  setNextCode: (code: string) => {}
+})
 
 export default function Provider(props: GlobalProviderProps) {
   const {children} = props
 
   const [session, setSession] = useState<Session | null>(null)
+  const [nextcode, setNextCode] = useState<string>('')
 
   useEffect(() => {
     let session: Session | null = null
@@ -31,10 +38,15 @@ export default function Provider(props: GlobalProviderProps) {
         setSession(res)
       })
     }
+
+    const nextCode = localStorage.getItem('next_code') || ''
+    setNextCode(nextCode)
   }, []);
 
   const value = {
-    session
+    session,
+    nextcode,
+    setNextCode
   }
 
   return (
