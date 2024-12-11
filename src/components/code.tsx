@@ -73,7 +73,7 @@ export function CodeHeader({lang = '', meta = '', value}: RawCode) {
 export function CodeTitle({meta = ''}: {meta: string}) {
   const {title} = extractFlags(meta)
   return (
-    <div className="text-tab-activeForeground flex items-center gap-3">
+    <div className="text-tab-activeForeground flex items-center gap-3 relative z-10">
       {title && <CodeIcon title={title} />}
       <span>{title}</span>
     </div>
