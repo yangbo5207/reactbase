@@ -19,7 +19,7 @@ export default function PostLayout({children}: {children: ReactNode}) {
 
     ul.style.display = 'block'
     ul.children[0].classList.add('active')
-    h2.innerText = 'Table Of Contents'
+    h2.innerText = 'ON THIS PAGE'
 
     nav.current.appendChild(h2)
     nav.current.appendChild(ul)

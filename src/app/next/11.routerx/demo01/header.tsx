@@ -9,14 +9,15 @@ export default function NavLinks() {
   let timeoutRef = useRef<number | null>(null)
 
   const navs = [
-    ['Features', '/#features'],
-    ['Reviews', '/#reviews'],
-    ['Pricing', '/#pricing'],
-    ['FAQs', '/#faqs'],
+    ['Home', ''],
+    ['Features', 'features'],
+    ['Reviews', 'reviews'],
+    ['Pricing', 'pricing'],
+    ['FAQs', 'faqs'],
   ].map(([label, href], index) => (
     <Link
       key={label}
-      href={href}
+      href={`/next/11.routerx/${href}`}
       className="relative -mx-3 -my-2 rounded-lg px-3 py-2 text-sm text-gray-700 transition-colors delay-150 hover:text-gray-900 hover:delay-0"
       onMouseEnter={() => {
         if (timeoutRef.current) {

@@ -29,9 +29,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarRail />
         </Sidebar>
 
+
         <SidebarInset>
           <HeaderBreadcrumb />
           {props.children}
+
           <div className='mt-8 border-t'>
             <footer className='h-16 px-6 flex items-center justify-between max-w-6xl mx-auto'>
               <div>© Copyright 2024 . <a href='https://beian.miit.gov.cn/' target='_blank'>这波能反杀</a> . <a href='https://beian.miit.gov.cn/' target='_blank'>粤ICP备2024222174号</a></div>
