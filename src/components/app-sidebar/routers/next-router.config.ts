@@ -25,20 +25,14 @@ const router = [
     title: '路由',
     url: '',
     icon: Bot,
-    isActive: false,
+    isActive: true,
     items: [
-      {
-        title: '路由设计原则',
-        url: '/next/11.routerx',
-      },
-      {
-        title: 'Explorer',
-        url: '/next/explorer',
-      },
-      {
-        title: 'Quantum',
-        url: '/next/quantum',
-      },
+      {title: '路由设计原则', url: '/next/11.routerx'},
+      {title: 'App Router', url: '/next/12.routes'},
+      {title: '组件化内聚', url: '/next/13.cohesive'},
+      {title: '路由跳转', url: '/next/14.navigation'},
+      {title: '路由加载原理', url: '/next/15.loader'},
+      {title: 'Link 详解', url: '/next/16.link'},
     ],
   },
   {
@@ -46,45 +40,32 @@ const router = [
     url: '',
     icon: BookOpen,
     items: [
-      {
-        title: 'Introduction',
-        url: '/next/introduction',
-      },
-      {
-        title: 'Get Started',
-        url: '/next/getStarted',
-      },
-      {
-        title: 'Tutorials',
-        url: '/next/tutorials',
-      },
-      {
-        title: 'Changelog',
-        url: '/next/changelog',
-      },
+      {title: 'Introduction', url: '/next/introduction'},
+      {title: 'Get Started', url: '/next/getStarted'},
+      {title: 'Tutorials', url: '/next/tutorials'},
+      {title: 'Changelog', url: '/next/changelog'},
     ],
   },
   {
-    title: '设置',
+    title: '流式传输',
     url: '',
     icon: Settings2,
     items: [
-      {
-        title: 'General',
-        url: '/next/general',
-      },
-      {
-        title: 'Team',
-        url: '/next/team',
-      },
-      {
-        title: 'Billing',
-        url: '/next/billing',
-      },
-      {
-        title: 'Limits',
-        url: '/next/limits',
-      },
+      {title: '基础协议', url: '/next/general'},
+      {title: '传输内容', url: '/next/team'},
+      {title: 'RSC 传输方式', url: '/next/billing'},
+      {title: '优劣分析', url: '/next/limits'},
+    ],
+  },
+  {
+    title: '缓存策略',
+    url: '',
+    icon: Settings2,
+    items: [
+      {title: '基础协议', url: '/next/general'},
+      {title: '传输内容', url: '/next/team'},
+      {title: 'RSC 传输方式', url: '/next/billing'},
+      {title: '优劣分析', url: '/next/limits'},
     ],
   },
 ]

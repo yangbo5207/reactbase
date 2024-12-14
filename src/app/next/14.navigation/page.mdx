@@ -1,0 +1,155 @@
+import {CodeTabs} from "@/components/code-with-tabs";
+import PreviewDemo01 from './demo01/preview'
+import PreviewDemo02 from './demo02/preview'
+import Link from 'next/link'
+
+## Table of contents
+
+## 总览
+
+NextJS 中，有四种方式可以实现路由之间的跳转。这篇文章将会介绍如何使用每一个方式。重要的方式，例如 Link 将会进一步额外单开一篇文章详细讲解。
+
+## Link 组件
+
+`Link` 组件是一个 NextJS 的内置组件。它基于 `<a>` 标签实现。
+
+```ts page.tsx
+import Link from 'next/link'
+
+export default function Page() {
+  return <Link href="/dashboard">Dashboard</Link>
+}
+```
+
+我可以使用 Link 组件，你点击该按钮<Link href="/">首页</Link>，就可以将页面导航到首页。
+
+```tsx
+<Link href="/">首页</Link>
+```
+
+由于该组件是基于 `<a>` 标签实现，那么，`<a>` 标签的能力，也就是直接在 Link 中使用，例如，我给该按钮添加一个 `target` 属性，你点击<Link href='/' target='_blank'>首页</Link>将会重开一个页面打开它。
+
+```tsx
+<Link href='/' target='_blank'>首页</Link>
+```
+
+通过如下的方式在路由跳转时传递参数
+
+点击该按钮，<Link href={{pathname: '/about', query: { name: 'test' }}}>About</Link>. 此时会跳转到一个 404 页面，不过我们这里的重点是观察 URL 中的参数。
+
+代码如下
+
+```tsx page.tsx
+// Navigate to /about?name=test
+<Link
+  href={{
+    pathname: '/about',
+    query: { name: 'test' }
+  }}
+>About</Link>
+```
+
+注意，由于要与动态路由中传递的参数进行区分，因此这种方式传递的参数我们会特定的说全称呼，为 `searchParams`
+
+因此，在接收这类参数时，如果你正在编写客户端组件。你需要使用 `useSearchParams()` 来获取 `searchParams`
+
+```js -c
+'use client'
+
+import { useSearchParams } from 'next/navigation'
+
+export default function SearchBar() {
+  const searchParams = useSearchParams()
+
+  const name = searchParams.get('name')
+
+  // URL -> `/about?name=test`
+  // `name` -> 'test'
+  return <>name: {name}</>
+}
+```
+
+如果你正在编写服务端组件，我们可以直接在页面入口的 Page 组件的 props 中获取
+
+```js
+export default function Page({searchParams}: {
+  searchParams: { [key: string]: string | string[] | undefined }
+}) {
+  ...
+}
+```
+
+Link 组件的更多用法，我们会在<Link href='/next/16.link'>后续</Link>详细解读
+
+## useRouter
+
+有的时候，我们需要在 JS 逻辑中去手动指定下一个路由的具体地址，这个时候 Link 组件就无法帮到我们了。因此，我们需要使用另外的 API 来做到这个事情。
+
+在客户端组件中，我们使用 `useRouter` 来做到这个事情，案例以及代码如下所示
+
+<PreviewDemo01 />
+
+```tsx demo.tsx -c
+!from ./demo01/index.tsx
+```
+
+如果我们要单独传递 `searchParams`，则只需要在后面添加字符串即可。
+
+```js
+router.push('/detail?id=11241&name=tom')
+```
+
+读取参数的方式与上面讲解的内容是一致的，这里不再赘述。
+
+## redirect
+
+`use server`
+
+在服务端组件中，路由逻辑的跳转则主要体现为**重定向**。因此这里需要单独提供一个新的 api 来处理服务端逻辑中的路由跳转。 `redirect`
+
+```ts page.tsx -c
+import { redirect } from 'next/navigation'
+
+async function fetchTeam(id: string) {
+  const res = await fetch('https://...')
+  if (!res.ok) return undefined
+  return res.json()
+}
+
+export default async function Profile({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const id = (await params).id
+  if (!id) {
+    redirect('/login')
+  }
+
+  const team = await fetchTeam(id)
+  if (!team) {
+    redirect('/join')
+  }
+
+  // ...
+}
+```
+
+这通常用于某一个 post 请求成功之后重定向到其他页面。
+
+## History API
+
+我们可以使用 `history.pushState` `history.replaceState` 往浏览器的路由堆栈中添加记录。例如，当你希望改变 URL 中的 `search` 时，但是又不希望页面发生跳转行为，就可以使用他们，演示案例如下
+
+<PreviewDemo02 />
+
+
+```tsx SortProducts.tsx -c
+!from ./demo02/index.tsx
+```
+
+我们可以点击浏览器的回退和前进按钮观察具体的演示结果。
+
+其中，`pushState` 表示往堆栈记录中，添加一条记录。
+
+`replaceState` 表示替换栈顶位置的记录。

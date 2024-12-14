@@ -1,0 +1,174 @@
+import {CodeTabs} from "@/components/code-with-tabs";
+
+## Table of contents
+
+## 组件化内聚基础理论
+
+在 《React 知命境》的学习中，我们专门强调了组件化的呈现形式。这里我们再重复一下。
+
+假如我们将一个文件约定成一个组件，例如 `Button`，那么，组成该 Button 组件的所有的内容，都应该存放到该文件夹中，而不应该分散到别的地方。
+
+```ts Button.
++ Button
+  - index.tsx
+  - index.css
+  - video.mp3
+  - bg.jpg
+```
+
+这样处理之后，对外部而言，Button 组件是一个完整的整体，而不需要关心你内部到底是如何构成的。使用时只关注 `Button` 文件夹即可
+
+```ts other.tsx
+import Button from '@/components/Button'
+```
+
+这种尽可能将该组件所有相关的内容，都放在文件夹内部处理的方式，我们称之为组件化，或者组件化内聚。
+
+
+## 先解耦拆分
+
+在完成一个项目时，我们脑袋里面应该首先是有一个完整的整体。如果你是一个架构师，在设计项目架构时，则需要基于项目的开发效率和后期可维护性等角度，对这个完整的整体进行逻辑拆分。
+
+当然，我们首先第一步要做的事情，就是按照路由架构的思路进行拆分，将项目级的复杂度，降低为页面组件级的复杂度。路由方案我们已经分析过了，这里就不再赘述。
+
+在这套基于文件系统的路由结构中，每个带有 `page.tsx` 的文件夹都表示一个组件。他表示一个 UI 组件的的入口。
+
+除此之外，Next.js 这套架构思路中，还提供了另外的拆分部分，其中包含
+
+**与 page.tsx 平级的其他子组件**，这些子组件都是一个文件夹，并且包含了 `page.tsx`，他将与 router 一一对应。
+
+```ts
++ app
+  - page.tsx   // --> /
+  + next  // --> /next
+  + react // --> /react
+  + rn // --> /rn
+```
+
+**layout.tsx**
+
+通常情况下，如果你在这些子组件中，包含了共享的内容，可以直接将这些内容编写在 `layout.tsx`。这里的共享是指，在路由切换时，依然保持不变的 UI 部分。
+
+```ts
++ app
+  - page.tsx   // --> /
+  + next  // --> /next
+  + react // --> /react
+  + rn // --> /rn
+  // !focus(1:1)
+  - layout.tsx
+```
+
+**template.tsx**
+
+`template` 的功能与 layout.tsx 类似，不过 `layout.tsx` 更多的是符合框架提供的默认行为，如果我们想要改变默认行为，则需要考虑使用 `template.tsx`，通常情况下，我们很少会使用到它。
+
+**not-found.tsx**
+
+路由匹配不到文件组件时，显示的回退 UI 组件。表示没有找到当前的路由内容。
+
+后续还有很多重要的，由框架默认提供的拆分出来的角色，例如 `middleware.ts`，`default.tsx` `loading.tsx` 等，我们会在后续逐一详细学习。
+
+
+## 自定义解耦
+
+除了框架默认提供的解耦出来的子模块，我们在实际的开发中，还需要自己设计一些常用的子模块。这些通常就比较灵活，不需要非得按照固定的方式来做，这里只推荐一下我理解的比较合理的方式。
+
+**components**
+
+有的时候，我们需要对当前的 `page.tsx` 做子组件的拆分，那么这些子组件放在哪里呢，我们就可以放在当前目录下，与 `page.tsx` 平级的 `components` 目录下。
+
+```ts
++ app
+  - page.tsx   // --> /
+  + next  // --> /next
+  + react // --> /react
+  + rn // --> /rn
+  - layout.tsx
+  // !focus(1:1)
+  + components
+```
+
+**api.ts**
+
+我们可以单独把当前页面的接口请求逻辑放在 `api.ts` 文件中。
+
+```ts
++ app
+  - page.tsx   // --> /
+  + next  // --> /next
+  + react // --> /react
+  + rn // --> /rn
+  - layout.tsx
+  + components
+  // !focus(1:1)
+  - api.ts
+```
+
+```ts api.ts
+import {createClient} from '@/utils/server/supabase'
+
+export async function getLikeCount(article: string) {
+  const supabase = await createClient()
+  const {data, error} = await supabase.from('next').select('*').eq('article', article)
+  if (error) {
+    console.error(error)
+    return error
+  }
+  return data[0].like_count || 0
+}
+
+export async function getLoginInfor() {
+  const supabase = await createClient()
+  const {data, error} = await supabase.auth.getSession()
+  console.log(data, error)
+}
+```
+
+**BFF 架构思维**
+
+我们也可以将我们之前在[《React19 全解尊享版》](https://usehook.cn/advance/bff)中提高的架构思维里的角色全部都引入进来
+
+
+**单独的样式**
+
+```ts
++ app
+  - page.tsx   // --> /
+  + next  // --> /next
+  + react // --> /react
+  + rn // --> /rn
+  - layout.tsx
+  + components
+  - api.ts
+  // !focus(1:1)
+  - page.css
+```
+
+其他模块大家可以自行根据实际情况设计。
+
+## 再内聚组合
+
+框架提供的模块，通过脚手架编译的方式会自动聚合在一起。因此我们必须要关心如何内聚他们。
+
+其他自定义的模块，通常是通过 `import` 语法聚合在一起
+
+```ts page.tsx
+import {getList} from './api'
+import Section from './component/section'
+import './page.css'
+
+...
+```
+
+总之对外而言，我们只以单独的，独立的组件呈现。例如，`app` 表示整个项目组件。`app/next` 表示整个 `next` 组件。
+
+我们要通过这篇文章，仔细的理解我们在架构层面经常提到嘴边的高内聚低耦合的具体含义，这是合理规划 NextJS 项目结构的重要思想内容。
+
+## 总结
+
+学到这里，实际上我们已经可以使用 nextJS 去合理的构建一个完整的项目了。
+
+在往后就是更具体的细节技术点上面的学习，就不再具备必要性。这些细节会出现在特定的应用场景中，用到时我们可以随时查阅文档或者把后续的文章当做文档进行查询使用。也就意味着，如果前面的文章你都掌握吸收了，那么，你就已经具备了用好 NextJS 的基础条件。
+
+不过需要引起重视的是，前面这些内容，虽然简单，但是要落到实处，在项目中严格践行，还需要自己有一个消化与内化的过程，才能转化为自己的知识积累。

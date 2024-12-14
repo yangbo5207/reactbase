@@ -1,0 +1,158 @@
+import {CodeTabs} from "@/components/code-with-tabs";
+
+## Table of contents
+
+## App Router 简介
+
+`App Router` 是一种约定式路由方案。在路由规则的设计上，他基本上完全遵循了我们上一章介绍的路由设计原则。只是在路由与代码组件之间的映射关系上，他采用了基于代码文件结构的方式。
+
+因此，在掌握了路由设计原则的基础之上，我们只需要简单了解一下他是如何与文件结构系统映射的即可。
+
+## 根路由
+
+在创建 Next.js 项目时，`create-next-app` 会提供一个选项，让我们将代码放置到 `src/` 目录中
+
+```js
+? Would you like your code inside a `src/` directory? › No / Yes
+```
+
+选择 yes，初始状态下的项目结构大概如下，这里我们重点关注 src 目录中的代码
+
+
+```ts
++ .next
++ node_modules
++ public
+// !focus(1:8)
++ src
+  + app
+    + fonts
+    - favicon.ico
+    - globals.css
+    - layout.tsx
+    - page.tsx
+  + lib
+- .eslintrc.json
+- .gitignore
+- next.config.ts
+... ...
+```
+
+> `+` 代表文件夹，`-` 代表单个文件
+
+在其他情况中，当我们通过如下的形式访问一个组件时
+
+```js
+import App from '@/components/App'
+```
+
+如果 App 是一个文件夹，实际上我们访问的是
+
+```js
+import App from '@/components/App/index.tsx'
+```
+
+在 App Router 中，`page.tsx` 被默认为了一个组件的入口文件。
+
+因此，当我们访问项目根目录时，以本项目举例 `react.usehook.cn/`，在代码文件中，实际上访问的是 `src/app/page.tsx`. 该映射规则由脚手架自动解析而来，我们无需进行额外的配置。
+
+
+## 路由嵌套
+
+当我们想要访问 `/next` 时，按照所见即所得的原则，我们只需要在 `app` 目录下，创建一个 `next` 目录即可。
+
+```js
++ app
+  - page.tsx
+  // !focus(1:2)
+  + next
+    - page.tsx
+```
+
+不过需要特别注意的是，文件夹中只有包含了 `page.tsx`，该文件夹才能表示一个路由组件。与我们设计的 `pathname` 保持映射关系。
+
+如果你仅创建一个普通的文件，不会解析为路由。
+
+如果你创建一个文件夹，但是文件夹下面没有 `page.tsx`，也不会解析为路由。
+
+
+所以此时，如果我们想要通过 `/next/12.routes` 访问当前这篇文章，那么目录结构应调整为继续嵌套在 `next` 文件夹中
+
+```js
++ app
+  - page.tsx
+  + next
+    - page.tsx
+    // !focus(1:2)
+    + 12.routes
+      - page.tsx
+    + 11.routerx
+    + 10.rsc_3
+    + ...
+```
+
+## `page.tsx` 与 `next/page.tsx`
+
+注意，许多人学习此规则时，由于都路由的设计原则并不理解，所以常常在初学时对同一目录下的 `page.tsx` 与 `next/page.tsx` 的理解造成误解。认为他们是一个上下级关系。
+
+有这样的路由切换关系
+
+```ts
+usehook.cn/
+usehook.cn/next
+usehook.cn/react
+usehook.cn/rn
+```
+
+在文件结构中，我们常常会粗浅的把他们认为他们映射的文件结构是这样的
+
+```ts
++ app
+  - page.tsx
+  + next
+  + react
+  + rn
+```
+
+
+实际上这些路由的对应的文件结构是这样的，他最终找到是 `page.tsx`
+
+```ts
++ app
+  - /page.tsx
+  + next/page.tsx
+  + react/page.tsx
+  + rn/page.tsx
+```
+
+通常情况下，这表达的是一个**平级的切换关系**，而不是一个上下级关系。实际上，`/` 是 `/home` 的简略设计，我们通常用来表示首页或者根节点
+
+
+一定要注意，文件夹才是一个路由组件的主体。因此，如果你要找 next 路由的上级，我们找的应该是 `app` 这个目录。
+
+例如，如果我们要编写一些 `/` `/next` `/rn` 这几个路由共享的 UI 内容，我们可以在 `app/layout.tsx` 中编写
+
+```ts
++ app
+  // !focus(1:1)
+  - layout.tsx
+  - page.tsx
+  + next
+  + react
+  + rn
+```
+
+`page.tsx` `next/page.tsx` `rn/page.tsx` 都会作为该 `layout.tsx` 的 `children` 传入该组件。当路由发生变化时，`children` 的内容也会发生完全一致的变化
+
+```js layout.tsx -c
+export default function Layout(props) {
+  return (
+    <div>
+      <div>这是多个路由共享的部分 `/` `/next` `/rn`，下面是这几个路由作为 children 传入的部分</div>
+      {props.children}
+    </div>
+  )
+}
+```
+
+ok，路由基本的嵌套规则我们就聊到这里，接下来一篇文章，我们学习**组件化的内聚思想**，在 Next.js 文件结构中的体现。
