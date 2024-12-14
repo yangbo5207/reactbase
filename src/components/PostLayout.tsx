@@ -49,7 +49,7 @@ export default function PostLayout({children}: {children: ReactNode}) {
   }, []);
 
   return (
-    <div>
+    <div className='relative'>
       <div className='keep'>
         <div className='content'>{children}</div>
         <div className='nav'>

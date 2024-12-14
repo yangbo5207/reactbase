@@ -45,4 +45,29 @@ export default function Page() {
 
 ## 路由缓存
 
-待续...
+在客户端加载页面时，访问过的页面信息与预加载的页面信息(RSC Component Payload)会缓存在`Route Cache` 中。路由的切换会尽可能的利用缓存信息，而不是在切换时总是向服务端请求数据，从而提高用户体验。
+
+但是需要注意的是，这里缓存的不是**页面**，页面依然会重新根据 `RSC Payload` 重新创建。
+
+如果我们要直接缓存页面，则需要使用 `staleTimes` 字段来进行全局的配置
+
+> 目前，这是一个实验性的功能，在未来可能会发现变化
+
+```ts next.config.ts -c
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  experimental: {
+    staleTimes: {
+      dynamic: 30, // 针对 ssr，非静态、Link 的 prefetch 不为 true
+      static: 180, // 静态，或者 Link 的 prefetch 为 true
+    },
+  },
+}
+
+module.exports = nextConfig
+```
+
+## 部分渲染
+
+这一点我们在前面也已经强调过。在路由切换时，共享的 UI 组件会被保留，UI 上面只改变路由改变的部分。 App Router 完美实现了路由与 UI 的对应关系，达到了所见即所得的程度。
+

@@ -115,16 +115,15 @@
 }
 
 .keep {
-  @apply max-w-6xl mx-auto px-6 relative flex flex-row items-baseline;
+  @apply max-w-6xl mx-auto px-6 relative flex flex-row items-baseline lg:pr-[18rem];
   .content {
-    flex: 1;
-    width: 0;
+  
   }
   .nav {
-    @apply top-28 hidden md:block;
+    @apply top-28 hidden lg:block;
     width: 16rem;
-    position: sticky;
-    margin-left: 2rem;
+    position: fixed;
+    right: 1rem;
   }
   p, li {
     @apply text-[15px] leading-7 tracking-wider my-5;
