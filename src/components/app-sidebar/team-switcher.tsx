@@ -1,5 +1,5 @@
 import * as React from "react"
-import { ChevronsUpDown, Plus } from "lucide-react"
+import { ChevronsUpDown, Plus, Antenna } from "lucide-react"
 import {usePathname, redirect} from 'next/navigation'
 import { AudioWaveform, BookOpen, Bot, Command, Frame, GalleryVerticalEnd, Map, PieChart, Settings2, SquareTerminal, Tent} from "lucide-react"
 
@@ -49,6 +49,13 @@ const teams: Team[] = [
     version: "react-native@0.76.0",
     key: 'rn',
     path: '/rn',
+  },
+  {
+    name: "Farmer Motion",
+    logo: Antenna,
+    version: "framer-motion@11.13.5",
+    key: 'motion',
+    path: '/motion',
   },
 ]
 

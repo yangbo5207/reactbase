@@ -4,6 +4,7 @@ import { type LucideIcon } from "lucide-react"
 import router1 from './routers/next-router.config'
 import router2 from './routers/react-rotuer.config'
 import router3 from './routers/rn-router.config'
+import router4 from './routers/montion-router.config'
 
 type Item = {
   title: string,
@@ -17,6 +18,7 @@ const routers: { [key: string]: Item[] } = {
   next: router1,
   react: router2,
   rn: router3,
+  motion: router4
 }
 
 const otherRouter: { [key: string]: Item } = {

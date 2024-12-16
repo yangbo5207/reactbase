@@ -1,0 +1,43 @@
+import {CodeTabs} from '@/components/code-with-tabs'
+import Preview01 from './demo01/preview'
+
+## Table of contents
+
+## 简介
+
+**Framer Motion** 是一个功能非常丰富，并且与 React 融合得非常好的一个动画库。它是唯一一个具备 `hybrid engine` 的动画库，能够轻松实现**硬件加速**。他可以在尽可能少的代码量的情况下，提供非常丰富的想象力。
+
+在这篇文章中，我们将简单介绍和感受一下它的魅力
+
+
+## install
+
+我们可以使用如下指令安装它
+
+
+<CodeTabs>
+```js !!tabs yarn. -c
+yarn add motion
+```
+
+```js !!tabs npm. -c
+npm install motion
+```
+</CodeTabs>
+
+安装好之后，我们可以通过如下的代码在 React 项目中引入
+
+```tsx page.tsx
+import {motion} from 'motion/react'
+```
+
+
+我们先使用
+
+```tsx page.tsx -c
+!from ./demo01/index.tsx
+```
+
+预览效果如下
+
+<Preview01 />

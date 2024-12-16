@@ -1,7 +1,3 @@
-import Preview from '@/components/Preview'
-import Header from './demo01/header'
-
-
 export default function Page() {
   return (
     <div className="gap-4 p-4 border border-gray-200">

@@ -1,12 +1,16 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import Link from 'next/link'
 import { AnimatePresence, motion } from 'framer-motion'
 
 export default function NavLinks() {
   let [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
   let timeoutRef = useRef<number | null>(null)
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, []);
 
   const navs = [
     ['Home', ''],
@@ -18,6 +22,7 @@ export default function NavLinks() {
     <Link
       key={label}
       href={`/next/11.routerx/${href}`}
+      scroll={false}
       className="relative -mx-3 -my-2 rounded-lg px-3 py-2 text-sm text-gray-700 transition-colors delay-150 hover:text-gray-900 hover:delay-0"
       onMouseEnter={() => {
         if (timeoutRef.current) {

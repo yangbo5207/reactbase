@@ -117,7 +117,8 @@
 .keep {
   @apply max-w-6xl mx-auto px-6 relative flex flex-row items-baseline lg:pr-[18rem];
   .content {
-  
+    width: 0;
+    flex: 1;
   }
   .nav {
     @apply top-28 hidden lg:block;
@@ -131,7 +132,7 @@
   }
   
   pre {
-    @apply leading-6 overflow-x-auto;
+    @apply leading-6 overflow-x-auto py-4;
     border-color: var(--ch-23);
   }
   
@@ -268,12 +269,12 @@ html.light {
   --ch-20: #add6ff;
   --ch-21: #0969da;
   --ch-22: #f8fafc;
-  --ch-23: #d1d5db;
+  --ch-23: #f1f1f1;
   --ch-24: #8c959f;
   --ch-25: #afb8c133;
   --ch-26: #ffffffe6;
   --ch-27: rgb(239 246 255);
   --ch-28: rgb(59 130 246);
   --ch-code-header-bg: #FFFFFF;
-  --ch-code-bg: #f7f9fb;
+  --ch-code-bg: #fdfdfd;
 }
