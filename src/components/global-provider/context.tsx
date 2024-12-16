@@ -36,6 +36,8 @@ export default function Provider(props: GlobalProviderProps) {
     if (!login_message) {
       getLoginInfor().then(res => {
         setSession(res)
+      }).catch(e => {
+        console.error(e)
       })
     }
 

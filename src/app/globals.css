@@ -116,98 +116,98 @@
 
 .keep {
   @apply max-w-6xl mx-auto px-6 relative flex flex-row items-baseline lg:pr-[18rem];
-  .content {
-    width: 0;
-    flex: 1;
-  }
-  .nav {
-    @apply top-28 hidden lg:block;
-    width: 16rem;
-    position: fixed;
-    right: 1rem;
-  }
-  p, li {
-    @apply text-[15px] leading-7 tracking-wider my-5;
-    color: var(--ch-4);
-  }
-  
-  pre {
-    @apply leading-6 overflow-x-auto py-4;
-    border-color: var(--ch-23);
-  }
-  
-  code[data-language="plaintext"] {
-    @apply text-xs px-[6px] py-[3px] rounded-md !bg-gray-200 mx-1 !text-amber-600;
-  }
-  
-  p a {
-    @apply underline text-blue-700;
-  }
-  
-  p code {
-    @apply text-xs px-[6px] py-[3px] border border-gray-200 dark:border-gray-700 mx-1 text-amber-600 dark:text-amber-400 rounded;
-  }
-  
-  h1, h2, h3, h4, h5, h6 {
-    @apply scroll-mt-20;
-  }
-  
-  h1 {
-    @apply my-10 font-bold text-2xl;
-  }
-  h2 {
-    @apply my-12 font-bold text-lg;
-  }
-  
-  h2#table-of-contents {
-    display: none;
-  }
-  h2#table-of-contents + ul {
-    display: none;
-  }
-  
-  h3 {
-    @apply font-bold text-[15px] mt-6;
-  }
-  
-  /* blockquote 普通提示 */
-  blockquote {
-    @apply px-4 my-5 py-0.5 rounded leading-6;
-    background-color: var(--ch-27);
-  }
-  blockquote:before {
-    @apply content-['i'] w-5 h-5 text-background flex items-center justify-center rounded-full mt-4;
-    background-color: var(--ch-28);
-  }
-  
-  .headings h2#table-of-contents {
-    @apply text-gray-300 text-sm;
-  }
-  .headings ul {
-    @apply mt-4;
-  }
-  .headings li {
-    @apply my-2 text-gray-400 dark:text-gray-500 text-sm transition;
-  }
-  .headings li.active {
-    @apply text-gray-800 font-bold dark:text-gray-200
-  }
-  
-  hr {
-    @apply border-t border-gray-100 my-12
-  }
-  .code-simple {
-    @apply relative;
-  }
-  .code-simple button {
-    @apply absolute right-3 top-3
-  }
-  .header + .code-simple button {
-    @apply -top-8
-  }
-  div[data-state="active"] .code-simple button {
-    @apply -top-8
-  }
+}
+.keep .content {
+  width: 0;
+  flex: 1;
+}
+.keep .nav {
+  @apply top-28 hidden lg:block;
+  width: 16rem;
+  position: fixed;
+  right: 1rem;
+}
+.keep p, .keep li {
+  @apply text-[15px] leading-7 tracking-wider my-5;
+  color: var(--ch-4);
+}
+
+.keep pre {
+  @apply leading-6 overflow-x-auto py-4;
+  border-color: var(--ch-23);
+}
+
+.keep code[data-language="plaintext"] {
+  @apply text-xs px-[6px] py-[3px] rounded-md !bg-gray-200 mx-1 !text-amber-600;
+}
+
+.keep p a {
+  @apply underline text-blue-700;
+}
+
+.keep p code {
+  @apply text-xs px-[6px] py-[3px] border border-gray-200 dark:border-gray-700 mx-1 text-amber-600 dark:text-amber-400 rounded;
+}
+
+.keep h1, .keep h2, .keep h3, .keep h4, .keep h5, .keep h6 {
+  @apply scroll-mt-20;
+}
+
+.keep h1 {
+  @apply my-10 font-bold text-2xl;
+}
+.keep h2 {
+  @apply my-12 font-bold text-lg;
+}
+
+.keep h2#table-of-contents {
+  display: none;
+}
+.keep h2#table-of-contents + ul {
+  display: none;
+}
+
+.keep h3 {
+  @apply font-bold text-[15px] mt-6;
+}
+
+/* blockquote 普通提示 */
+.keep blockquote {
+  @apply px-4 my-5 py-0.5 rounded leading-6;
+  background-color: var(--ch-27);
+}
+.keep blockquote:before {
+  @apply content-['i'] w-5 h-5 text-background flex items-center justify-center rounded-full mt-4;
+  background-color: var(--ch-28);
+}
+
+.keep .headings h2#table-of-contents {
+  @apply text-gray-300 text-sm;
+}
+.keep .headings ul {
+  @apply mt-4;
+}
+.keep .headings li {
+  @apply my-2 text-gray-400 dark:text-gray-500 text-sm transition;
+}
+.keep .headings li.active {
+  @apply text-gray-800 font-bold dark:text-gray-200
+}
+
+.keep hr {
+  @apply border-t border-gray-100 my-12
+}
+.keep .code-simple {
+  @apply relative;
+}
+.keep .code-simple button {
+  @apply absolute right-3 top-3
+}
+.keep .header + .code-simple button {
+  @apply -top-8
+}
+.keep div[data-state="active"] .code-simple button {
+  @apply -top-8
 }
 
 html {

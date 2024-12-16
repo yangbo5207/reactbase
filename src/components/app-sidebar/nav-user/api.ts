@@ -17,16 +17,18 @@ export type Session = {
   user: User
 }
 
-export async function getLoginInfor(): Promise<Session> {
+export async function getLoginInfor(): Promise<Session | null> {
   const {data, error} = await supabase.auth.getSession()
   const s = data.session
-  if (!s || error) throw new Error()
+  if (!s || error) {
+    return null
+  }
 
   const identifier = s.user.identities
-  if (!identifier) throw new Error()
+  if (!identifier) return null
 
   const identity_data = identifier[0].identity_data
-  if (!identity_data) throw new Error()
+  if (!identity_data) return null
 
   const userinfo = {
     access_token: s.access_token,
