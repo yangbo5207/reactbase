@@ -33,6 +33,7 @@ const router = [
       {title: '路由跳转', url: '/next/14.navigation'},
       {title: '路由加载原理', url: '/next/15.loader'},
       {title: 'Link 详解', url: '/next/16.link'},
+      {title: '路由分组', url: '/next/17.group'},
     ],
   },
   {
@@ -40,7 +41,7 @@ const router = [
     url: '',
     icon: BookOpen,
     items: [
-      {title: 'Introduction', url: '/next/introduction'},
+      {title: '数据来源', url: '/next/17.source'},
       {title: 'Get Started', url: '/next/getStarted'},
       {title: 'Tutorials', url: '/next/tutorials'},
       {title: 'Changelog', url: '/next/changelog'},

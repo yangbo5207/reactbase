@@ -1,13 +1,12 @@
 import { ChevronRight } from "lucide-react"
 import {Collapsible, CollapsibleContent, CollapsibleTrigger,} from "@/components/ui/collapsible"
 import {SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem,} from "@/components/ui/sidebar"
-import Link from 'next/link'
+import ActiveLink from '@/components/active-link'
 
-import {useStore} from "@/components/app-sidebar/context";
+import {useStore} from '@/components/app-sidebar/context'
 
 export function NavMain() {
   const {currentNavigation, switchNavigationActive, setCurrentRouter} = useStore()
-
   function __collapsibleHandler(i: number) {
     switchNavigationActive(i)
   }
@@ -37,9 +36,9 @@ export function NavMain() {
                   {item.items?.map((subItem) => (
                     <SidebarMenuSubItem key={subItem.title}>
                       <SidebarMenuSubButton asChild>
-                        <Link href={subItem.url} onClick={() => setCurrentRouter(subItem)}>
+                        <ActiveLink href={subItem.url} onClick={() => setCurrentRouter(subItem)}>
                           <span>{subItem.title}</span>
-                        </Link>
+                        </ActiveLink>
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                   ))}

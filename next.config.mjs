@@ -20,7 +20,7 @@ const nextConfig = {
     staleTimes: {
       dynamic: 30, // 针对 ssr，非静态、非预取，Link 的 prefetch 不为 true
       static: 180, // 静态，或者 Link 的 prefetch 为 true
-    },
+    }
   },
   reactStrictMode: false
 };

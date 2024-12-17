@@ -1,0 +1,141 @@
+import {CodeTabs} from "@/components/code-with-tabs";
+
+## Table of contents
+
+## 路由分组
+
+以本项目左侧的侧边栏目录为例。我在路由设计上，能被选中的路由都是同层级的路由。因此，路由结构设计是这样的
+
+```js
+/next/
+/next/0.auth
+/next/1.ssr
+/next/2.isomorphism
+...
+/next/16.link
+```
+
+对应的文件结构也于此完全一致
+
+```js
++ app
+  + next
+    - page.tsx
+    + 0.auth
+    + 1.ssr
+    + 2. isomorphism
+    + ...
+    + 16.link
+    + 17.group
+```
+
+但是，当数量变得越来越多的时候，就会出现一个维护成本变得越来越高的问题。因此，通常情况下，我们会对过多的同层级命名进行一个分类。正如左侧导航栏那样，使用次级菜单的方式进行分类。
+
+同样的，在文件结构中，NextJS 也提供了一种**仅分类**的方式，调整文件结构如下
+
+```js
++ app
+  + next
+    - page.tsx
+    + (base)
+      + 0.auth
+      + 1.ssr
+      + 2. isomorphism
+      + ...
+    + (router)
+      + 11.routerx
+      + ...
+      + 16.link
+      + 17.group
+    + (skin)
+      + ...
+```
+
+分类文件夹命名使用小括号包裹 `(base)`。此时需要特别注意的是，这种特殊的文件夹对路由结构并不造成任何影响，在文件结构解析路由对应的组件时会跳过此目录。
+
+路由与文件的对应关系如下
+
+```js
+router: /next/0.auth
+
+// 对应的文件为
+
+file: app/next/(base)/0.auth/page.tsx
+```
+
+## layout.tsx
+
+同一分组的路由可以额外单独共享一个布局。
+
+因此，体现在代码上，我们可以在分组目录下创建一个额外的 `layout.tsx`
+
+```js
++ app
+  + next
+    - page.tsx
+    + (base)
+      + ...
+    + (router)
+      // !focus(1:1)
+      - layout.tsx
+      + 11.routerx
+      + ...
+      + 16.link
+      + 17.group
+    + (skin)
+      + ...
+```
+
+> 如此你的每个分组之间并不共享共同的布局，而是每个分组都不一样，那么你可以在分组目录中单独创建各自的 `layout.tsx`，然后删除上层节点的 `layout.tsx`
+
+## loading.tsx
+
+我们也可以为一组分组创建独属于该组的 `loading.tsx`，此时只有在访问该分组的路由时，才会呈现这个 `loading` 边界组件
+
+```js
++ app
+  + next
+    - page.tsx
+    + (base)
+      + ...
+    + (router)
+      // !focus(1:1)
+      - loading.tsx
+      + 11.routerx
+      + ...
+      + 16.link
+      + 17.group
+    + (skin)
+      + ...
+```
+
+## 注意事项
+
+路由组的命名不影响 pathname，因此我们在不同的分组中，要避免出现同样的路由命名，例如下面这种情况的文件结构就是不被允许的
+
+```js
+/next/(base)/link
+/next/(router)/link
+```
+
+他们都会被解析为 `/next/link`，从而造成冲突
+
+
+另外一个需要注意的点是，当我们为多个分组目录都设计了自己的 `layout.tsx`时，在页面中跨越分组层级进行路由跳转，将会导致整个页面重新加载。
+
+
+例如如下的目录结构
+
+```js
++ app
+  + (shop)
+    - layout.tsx
+    + cart
+    + ...
+  + (marketing)
+    -layout.tsx
+    + blog
+    + ...
+```
+
+当我们的路由从 `/cart` 跳转到 `/blog` 时，就会发生 `full page load`

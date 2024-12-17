@@ -1,0 +1,168 @@
+import {CodeTabs} from "@/components/code-with-tabs";
+
+## Table of contents
+
+## Link
+
+我们可以使用 NextJS 内置的 Link 组件跳转到一个指定的路由。默认情况下，当 Link 出现在视口时，该路由对应的组件 RSC 将会被提前加载。
+
+基础的用法如下
+
+```tsx page.tsx
+import Link from 'next/link'
+
+export default function Page() {
+  return <Link href="/dashboard">Dashboard</Link>
+}
+```
+
+Link 组件基于 `<a>` 标签封装，因此，它支持 `<a>` 标签的所有能力，例如，我们可以使用 `target='_blank'` 来表示跳转时打开一个新的页面。
+
+除此之外，Link 一共有 4 个 props 参数需要我们单独学习，接下来我们一一来看一下。
+
+## href
+
+`href` 是一个**必传**参数，表示目标路由，例如，我们这样使用，表示点击后会跳转到 `/about`
+
+```tsx
+<Link href='/about'>About</Link>
+```
+
+除了直接复制字符串之外，还可以，还可以传递 `query` 对象，如下的两种写法是等效的
+
+```tsx
+<Link href='/user?id=123456'>About</Link>
+
+<Link
+  href={{
+    pathname: '/user',
+    query: {id: '123456'}
+  }}
+>
+  About
+</Link>
+```
+
+## replace
+
+默认值为 `false` ，当值为 `true` 时，表示在路由跳转时，会在浏览器路由栈中替换栈顶的 URL 记录。
+
+```tsx
+<Link href='/dashboard' replace>
+  Dashboard
+</Link>
+```
+
+## scroll
+
+默认值为 `true`。当我们从别的页面，跳转到新的路由时，此时，如果路由对应的 `Page` 元素没有出现在视口，那么该页面就会自动滚动到路由对应的 `Page` 视口中可见的位置。
+
+这种情况通常出现在多个嵌套层级的路由中，直接导航到了更次级的路由。如果你觉得这种情况会对用户的使用体验带来困扰，你可以将其设置为 `false` 以禁用这种滚动行为。
+
+```tsx page.tsx
+import Link from 'next/link'
+
+export default function Page() {
+  return (
+    <Link href='/dashboard' scroll={false}>
+      Dashboard
+    </Link>
+  )
+}
+```
+
+## prefetch
+
+表示预加载，默认值为 `null`。在默认行为中，当 `Link` 组件出现在视口，那么该组件对应的页面组件就会预加载 RSC。但是这种预加载行为针对静态路由和动态路由有不同的表现。
+
+针对静态路由，会完整的预加载所有数据。
+
+针对动态路由，则会以 `loading.tsx` 作为边界，仅预加载靠近边界的部分数据。
+
+我们可以将其设置为 `true`。此时，动态路由和静态路由都会加载完整的数据。
+
+我们可以将其设置为 `false`。此时，预加载行为不会发生。
+
+```tsx page.tsx -c
+import Link from 'next/link'
+
+export default function Page() {
+  return (
+    <Link href='/dashboard' prefetch={false}>
+      Dashboard
+    </Link>
+  )
+}
+```
+
+## active URL
+
+在左侧的页面导航中，是由很多个 `Link` 组件组成。此时，我们需要标识当前页面是哪一个 `Link` 组件，就需要将其标识为 `active` 状态，那么我们应该怎么做呢？代码如下所示
+
+```tsx active-link.tsx -c
+'use client'
+
+import Link from 'next/link'
+import {usePathname} from 'next/navigation'
+import {cn} from '@/lib/utils'
+
+type PropsOf<C> = C extends (props: infer P) => any ? P : never
+type LinkProps = PropsOf<typeof Link>
+
+export default function ActiveLink(props: LinkProps) {
+  const {className, children, ...other} = props
+  const pathname = usePathname()
+
+  const cls = other.href === pathname ? 'bg-gray-200 dark:bg-gray-700' : ''
+
+  return (
+    <Link {...other} className={cn(className, cls)}>
+      {props.children}
+    </Link>
+  )
+}
+```
+
+## 中间件
+
+在中间件中，我们通常会进行身份验证，然后将页面根据验证结果跳转到不同的路由中。此时，`href` 的结果是动态的，但是我们需要提高预设一个需要预加载的页面内容。可以通过 `as` 属性来做到这个事情。
+
+例如，当验证通过之后，我希望页面 `/dashboard` 的数据被预加载。那么在中间件中的逻辑如下
+
+```ts middleware.ts -c
+import { NextResponse } from 'next/server'
+
+export function middleware(request: Request) {
+  const nextUrl = request.nextUrl
+  if (nextUrl.pathname === '/dashboard') {
+    if (request.cookies.authToken) {
+      return NextResponse.rewrite(new URL('/auth/dashboard', request.url))
+    } else {
+      return NextResponse.rewrite(new URL('/public/dashboard', request.url))
+    }
+  }
+}
+```
+
+`page.tsx` 的逻辑如下
+
+```tsx page.tsx -c
+'use client'
+
+import Link from 'next/link'
+import useIsAuthed from './hooks/useIsAuthed' // Your auth hook
+
+export default function Page() {
+  const isAuthed = useIsAuthed()
+  const path = isAuthed ? '/auth/dashboard' : '/public/dashboard'
+  return (
+    <Link as="/dashboard" href={path}>
+      Dashboard
+    </Link>
+  )
+}
+```
+
+在官方文档中，还提供了一些其他非常少见的用法，这里我们就不再赘述。
+
+除此之外，我们后续还要学习**路由组、动态路由、并行路由、路由拦截、中间件等知识，**，不过目前所学习的内容足以应付大多数项目，因此这部分内容我们会放到后续新增。我们要优先考虑集成一个项目的更关键的部分。
