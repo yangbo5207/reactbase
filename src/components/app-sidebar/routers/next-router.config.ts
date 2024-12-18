@@ -2,7 +2,7 @@ import { BookOpen, Bot, Settings2, SquareTerminal} from 'lucide-react'
 
 const router = [
   {
-    title: '基础',
+    title: 'base',
     url: '',
     icon: SquareTerminal,
     isActive: true,
@@ -22,7 +22,7 @@ const router = [
     ],
   },
   {
-    title: '路由',
+    title: 'router',
     url: '',
     icon: Bot,
     isActive: true,
@@ -37,12 +37,12 @@ const router = [
     ],
   },
   {
-    title: '暗黑模式与皮肤切换',
+    title: 'dark mode',
     url: '',
     icon: BookOpen,
     items: [
       {title: '数据来源', url: '/next/17.source'},
-      {title: 'Get Started', url: '/next/getStarted'},
+      {title: 'css 变量', url: '/next/18.cssvar'},
       {title: 'Tutorials', url: '/next/tutorials'},
       {title: 'Changelog', url: '/next/changelog'},
     ],

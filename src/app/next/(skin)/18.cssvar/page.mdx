@@ -1,0 +1,114 @@
+import {CodeTabs} from '@/components/code-with-tabs'
+import Preview1 from './demo01/preview'
+import Preview2 from './demo02/preview'
+
+## Table of contents
+
+## 自定义属性
+
+在 css 中，我们可以通过如下的方式定义自己的属性。这种方式又称为 css 变量。
+
+```css -c
+div {
+  ---border-color: brown;
+}
+```
+
+
+自定义属性必须以 `--` 开头。
+
+规则集所指定的选择器定义了自定义属性的可见作用域。在使用过程中，我们通常会将其定义在根节点的伪类下，这样就可以在 HTML 文档的任何地方访问该变量
+
+```css -c
+:root {
+  ---border-color: brown;
+}
+```
+
+在具体的元素属性中使用时，我们会使用 `var()` 函数来访问 css 变量对应的值
+
+
+
+```css
+div {
+  border-color: var(---border-color);
+}
+```
+
+## 改变值
+
+我们可以通过直接**修改单一变量的赋值**，达到修改多个元素样式的目的。
+
+例如，下面的案例，我在父元素中定义一个自定义变量，`--c-width`，子元素通过 `var(--c-width)` 访问它
+
+演示案例
+
+<Preview1 />
+
+代码如下所示
+
+```tsx demo01.tsx -c
+!from ./demo01/index.tsx
+```
+
+## 改变生效作用域
+
+我们可以在不同的作用域中，定义相同的变量名。这些变量名都会给予不同的赋值。当我们在项目交互中改变规则作用域时，也可以达到改变样式的目的。这是**皮肤切换的主要方式**。
+
+我们来完成一个例子。
+
+首先，在案例的 html 结构中，我们计划让根节点的 class 在 `light` 与 `dark` 之间来回切换。
+
+```html
+<div className='skin_demo2 light'>
+  ...
+</div>
+```
+
+然后在 css 中，定义对应的作用域变量
+
+```css
+.skin_demo2.light {
+  --bg-color: #fff;
+  --text-color: #333;
+}
+
+.skin_demo2.dark {
+  --bg-color: rgb(17 24 39);
+  --text-color: #efefef;
+}
+```
+
+然后，布局中使用自定义变量来设定对应的颜色值。
+
+```css
+.skin_demo2 {
+  @apply p-4 rounded-md;
+  background-color: var(--bg-color);
+}
+
+.skin_demo2 p, .skin_demo2 h3 {
+  color: var(--text-color);
+}
+```
+
+最后设定一个 `Switch` 组件与状态来实现 `light` 与 `dark` 的切换。
+
+演示效果如下所示，点击顶部右侧按钮，观察样式变化。
+
+<Preview2 />
+
+
+完整代码如下
+
+<CodeTabs>
+  ```tsx !!tabs index.tsx -c
+  !from ./demo02/index.tsx
+  ```
+
+  ```tsx !!tabs index.css -c
+  !from ./demo02/index.css
+  ```
+</CodeTabs>
+
+搞明白了这个知识点，在更完整的项目中，实现 dark mode 的逻辑是几乎一样的。对我们接下来的学习就做好完整的基础知识铺垫。

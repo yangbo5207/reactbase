@@ -1,0 +1,18 @@
+.skin_demo2.light {
+  --bg-color: #fff;
+  --text-color: #333;
+}
+
+.skin_demo2.dark {
+  --bg-color: rgb(17 24 39);
+  --text-color: #efefef;
+}
+
+.skin_demo2 {
+  @apply p-4 rounded-md;
+  background-color: var(--bg-color);
+}
+
+.skin_demo2 p, .skin_demo2 h3 {
+  color: var(--text-color);
+}
