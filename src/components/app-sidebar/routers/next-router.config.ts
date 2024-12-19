@@ -48,6 +48,15 @@ const router = [
     ],
   },
   {
+    title: 'render',
+    url: '',
+    icon: BookOpen,
+    items: [
+      {title: 'server render', url: '/next/21.server'},
+      {title: 'client render', url: '/next/18.cssvar'},
+    ],
+  },
+  {
     title: '流式传输',
     url: '',
     icon: Settings2,
