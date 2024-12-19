@@ -1,0 +1,70 @@
+import {CodeTabs} from "@/components/code-with-tabs";
+
+## Table of contents
+
+## 初始化
+
+```js
+const themes = ['light', 'dark']
+```
+
+我们之前已经分析过，当我们选择了 `dark` ，并且将其缓存到 `localStorage` 中。当第二次访问该页面，或者刷新页面时，我们希望页面能够直接显示 `dark mode`。但是如果我们不做额外处理的话，由于 React 逻辑会首先执行，从 `localStorage` 获取状态并设置给 html 会延后执行，因此会经历一个从 `light` 到 `dark` 的短暂闪烁过程。
+
+因此，我们要想办法，让初始化逻辑比 React 逻辑更早执行。
+
+这里更大的难题就是，如何把外置的 `script` 逻辑与 React 逻辑结合起来？
+
+## Script
+
+完整的解决方案，我们直接看代码。看完代码之后我再来解析，我们把代码放到 `src/components/switch-themes` 中
+
+<CodeTabs>
+  ```tsx !!tabs index.tsx -c
+  !from ./../../../../components/switch-themes/index.tsx
+  ```
+  ```tsx !!tabs context.tsx -c
+  !from ./../../../../components/switch-themes/context.tsx
+  ```
+
+  ```tsx !!tabs script.ts -c
+  !from ./../../../../components/switch-themes/script.ts
+  ```
+
+  ```tsx !!tabs types.d.ts -c
+  !from ./../../../../components/switch-themes/types.d.ts
+  ```
+</CodeTabs>
+
+
+## 解析
+
+首先，在 `html` 中，`<script>` 也是一个标签，我们可以在 React 组件中插入一个 `<script>` 标签。
+
+然后在 script 标签中，写入一下 JS 逻辑。
+
+```ts
+function ThemeScript({storageKey, defaultTheme, nonce}: Omit<ThemeProviderProps, 'children'>) {
+  const scriptArgs = JSON.stringify([storageKey, defaultTheme]).slice(1, -1)
+
+  return (
+    <script
+      suppressHydrationWarning
+      nonce={typeof window === 'undefined' ? nonce : ''}
+      dangerouslySetInnerHTML={{__html: `(${script.toString()})(${scriptArgs})`}}
+    />
+  )
+}
+```
+
+我们需要确保这个 JS 逻辑在 body 标签之前执行
+
+```html
+<ThemeContext value={value}>
+  <ThemeScript defaultTheme={defaultTheme} storageKey={storageKey} {...other} />
+  {children}
+</ThemeContext>
+```
+
+接下来我们需要注意的是，由于我们在前置的 `index.tsx` 组件中，标记了 `use client`，因此后续的模块都是客户端组件。**注意，客户端组件也会在服务端跑一次**。因此，我们可以借助这个逻辑，在客户端首先渲染时，直接渲染 html，此时的 html 中已经包含了 `script` 的逻辑。
+
+我们就可以首先执行 `script` 中的逻辑，从而让 body 内容首次渲染出来之前，显示 dark 模式。

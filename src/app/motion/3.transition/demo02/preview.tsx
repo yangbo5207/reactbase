@@ -5,6 +5,6 @@ import Preview from '@/components/Preview/reset-container'
 
 export default function Previewer() {
   return (
-    <Preview desc='width'><Demo /></Preview>
+    <Preview desc='display'><Demo /></Preview>
   )
 }
