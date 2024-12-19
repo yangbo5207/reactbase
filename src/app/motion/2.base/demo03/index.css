@@ -1,0 +1,7 @@
+.base_demo03 {
+  @apply border-2 border-red-500 rounded py-1 flex space-x-1 px-1;
+}
+
+.base_demo03 .item {
+  @apply w-24 h-24 bg-red-400 flex items-center justify-center rounded;
+}

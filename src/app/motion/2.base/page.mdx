@@ -1,0 +1,77 @@
+import {CodeTabs} from '@/components/code-with-tabs'
+import Preview01 from './demo01/preview'
+import Preview02 from './demo02/preview'
+import Preview03 from './demo03/preview'
+import Preview04 from './demo04/preview'
+
+## Table of contents
+
+## 基础用法
+
+使用 `motion.div` 表表示动画元素。
+
+使用 `animate` 属性来设置需要动画的属性值。
+
+例如下面的案例，我们通过改变 `x` 位置来执行动画
+
+```tsx
+!from ./demo01/index.tsx
+```
+
+演示效果，点击刷新按钮，可重置组件
+
+<Preview01 />
+
+## 支持动画的属性
+
+Motion 可以为任何 css 属性值实现动画。其中包括大量 css 动画本身已经支持的属性。还包括 css 不支持的属性。例如 `mask-image`
+
+我们可以为属性值传入
+
+- 1、数字: `0`, `100`
+- 2、包含数字的字符串: `0vh`, `10px`
+- 3、颜色: 十六进制、RGBA、HSLA
+- 4、包含多个数字/颜色的复杂字符串，例如 `box-shadow`
+- 5、display: none/block
+- 6、visibility: hidden/visible
+
+
+例如这样一个案例
+
+```tsx demo02.tsx -c
+!from ./demo02/index.tsx
+```
+
+<Preview02 />
+
+## 其他案例
+
+还有一些比较有意思的交互，例如在 flex 的属性 `justify-content` 发生变化时，我们也可以使用 `motion` 来添加变化过程中动画
+
+演示效果如下
+
+<Preview03 />
+
+完整代码
+
+<CodeTabs>
+  ```tsx !!tabs demo03.tsx -c
+  !from ./demo03/index.tsx
+  ```
+
+  ```css !!tabs index.css -c
+  !from ./demo03/index.css
+  ```
+</CodeTabs>
+
+## 跨越值类型的动画变化
+
+我们直接来看这个案例，点击刷新按钮可重置演示
+
+<Preview04 />
+
+案例中通过 `initial` 设置动画元素的初始宽度为 `5px`，然后运动到宽度为 `50%` 的尺寸位置。虽然前后两个尺寸单位不一致，但是很显然，动画依然生效。
+
+```tsx demo04.tsx -c
+!from ./demo04/index.tsx
+```

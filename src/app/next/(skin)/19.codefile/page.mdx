@@ -1,0 +1,38 @@
+import {CodeTabs} from "@/components/code-with-tabs";
+
+## Table of contents
+
+## 实现 dark mode
+
+掌握了上一章的基础知识，我们可以很容易实现 `dark mode`
+
+首先，由于是针对全网站的样式切换，因此，我们需要在最顶层的 `html` 标签上进行 css 规则作用域的切换
+
+```html
+<html class='dark'>
+  ...
+</html>
+```
+
+相应的 css 变量定义为如下
+
+```css
+:root {
+  --background: 0 0% 100%;
+  --foreground: 240 10% 3.9%;
+  ...
+}
+.dark {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  ...
+}
+```
+
+默认情况使用定义在 `:root` 中的值。`dark mode` 下使用 `.dark` 中定义的值。
+
+我们只需要确保后续的所有颜色相关的样式，都使用这些自定义变量。然后，当我们通过操作 `html` 的 classList，删除或者新增 `.dark`，就可以做到普通模式和暗黑模式的切换。
+
+## 如何更新 html class
+
+待续...

@@ -1,10 +1,8 @@
 import Demo from './index'
-import Preview from "@/components/Preview";
+import Preview from '@/components/Preview'
 
-export default function Pre() {
+export default function Previewer() {
   return (
-    <Preview>
-      <Demo />
-    </Preview>
+    <Preview><Demo /></Preview>
   )
 }

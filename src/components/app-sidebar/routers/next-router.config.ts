@@ -43,8 +43,8 @@ const router = [
     items: [
       {title: '数据来源', url: '/next/17.source'},
       {title: 'css 变量', url: '/next/18.cssvar'},
-      {title: 'Tutorials', url: '/next/tutorials'},
-      {title: 'Changelog', url: '/next/changelog'},
+      {title: '代码结构', url: '/next/19.codefile'},
+      {title: 'Script', url: '/next/changelog'},
     ],
   },
   {

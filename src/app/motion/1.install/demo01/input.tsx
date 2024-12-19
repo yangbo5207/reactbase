@@ -14,8 +14,7 @@ export function Input({
   max = 200
 }: InputProps) {
   return (
-    <label>
-      <code>{children}</code>
+    <div className='flex space-x-4'>
       <input
         value={value}
         type="range"
@@ -23,7 +22,8 @@ export function Input({
         max={max}
         onChange={(e) => set(parseFloat(e.target.value))}
       />
+      <code>{children}:</code>
       <div>{value}</div>
-    </label>
+    </div>
   );
 }

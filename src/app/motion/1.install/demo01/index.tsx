@@ -10,7 +10,7 @@ export default function App() {
   const [y, setY] = useState(0)
 
   return (
-    <div className='flex'>
+    <div className='flex items-center'>
       <div className='flex-1'>
         <motion.div
           className='box w-32 h-32 rounded-2xl border-red-500 border-4 border-dashed'
@@ -18,9 +18,9 @@ export default function App() {
           transition={{ type: 'spring' }}
         />
       </div>
-      <div className="flex flex-col w-32">
+      <div className="flex flex-col w-64  space-y-4">
         <Input value={x} max={100} min={0} set={setX}>x</Input>
-        <Input value={y}  max={100} min={0} set={setY}>y</Input>
+        <Input value={y}  max={100} min={-100} set={setY}>y</Input>
         <Input value={rotate} set={setRotate} min={-180} max={180}>rotate</Input>
       </div>
     </div>
