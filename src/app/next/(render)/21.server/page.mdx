@@ -24,4 +24,128 @@ import {CodeTabs} from "@/components/code-with-tabs";
 
 ## RSC Payload
 
-待续...
+在 NextJS App Router 的规范中，服务端渲染的最终目标虽然也包括最终要呈现到页面上的 HTML 字符串，但是他还跟普通的服务端渲染有所不同。
+
+首先，为了实现流式渲染，渲染工作会按照**路由段、Suspense**等进行分块。
+
+其次，为了确保前后端一致性与更快的水合速度，渲染结果还会额外包含一种特殊的数据结构：React Server Component Payload，简称 RSC Payload
+
+下面这段内容是我随意摘抄的一段 RSC Payload，大家可以先观察一下其包含的内容。
+
+```js /next/17.source?_rsc=1ld0r -c
+1:"$Sreact.fragment"
+3:I[5244,[],""]
+4:I[3866,[],""]
+6:I[6213,[],"OutletBoundary"]
+8:I[6213,[],"MetadataBoundary"]
+a:I[6213,[],"ViewportBoundary"]
+c:I[4835,[],""]
+:HL["/_next/static/css/854b0fa23996649f.css","style"]
+0:{"P":null,"b":"KGVEC0IkatmYw8GUj3RfV","p":"","c":["","next","17.source"],"i":false,"f":[[["",{"children":["next",{"children":["(skin)",{"children":["17.source",{"children":["__PAGE__",{}]}]}]}]},"$undefined","$undefined",true],["",["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/css/854b0fa23996649f.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]],"$L2"]}],{"children":["next",["$","$1","c",{"children":[null,["$","$L3",null,{"parallelRouterKey":"children","segmentPath":["children","next","children"],"error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L4",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":["(skin)",["$","$1","c",{"children":[null,["$","$L3",null,{"parallelRouterKey":"children","segmentPath":["children","next","children","(skin)","children"],"error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L4",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":["17.source",["$","$1","c",{"children":[null,"$L5"]}],{"children":["__PAGE__",["$","$1","c",{"children":[[["$","h2",null,{"id":"table-of-contents","children":"Table of contents"}],"\n",["$","ul",null,{"children":["\n",["$","li",null,{"children":["$","a",null,{"href":"#%E9%97%AE%E9%A2%98","children":"é—®é¢˜"}]}],"\n",["$","li",null,{"children":["$","a",null,{"href":"#%E6%95%B0%E6%8D%AE%E6%9D%A5%E6%BA%90","children":"æ•°æ®æ¥æº"}]}],"\n",["$","li",null,{"children":["$","a",null,{"href":"#%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F","children":"æ‰§è¡Œé¡ºåº"}]}],"\n"]}],"\n",["$","h2",null,{"id":"é—®é¢˜","children":"é—®é¢˜"}],"\n",["$","p",null,{"children":["åœ¨çŽ°å¦‚ä»Šçš„å‰ç«¯ç½‘ç«™ä¸­ï¼Œæ”¯æŒæš—é»‘æ¨¡å¼æ˜¯ä¸€ä¸ªåŸºæœ¬çš„åŠŸèƒ½ï¼Œæ­£å¦‚æœ¬ç½‘ç«™ä¸€æ ·ã€‚ä½†æ˜¯è¦åœ¨æœåŠ¡ç«¯æ¸²æŸ“çš„é¡¹ç›®ä¸­æ¯”è¾ƒå®Œç¾Žçš„æ”¯æŒæš—é»‘æ¨¡å¼ï¼Œåˆ™é¢ä¸´è®¸å¤šéº»çƒ¦ã€‚è¿™é‡Œæœ€ä¸»è¦çš„ä¸€ä¸ªéº»çƒ¦å°±æ˜¯ï¼Œå‡å¦‚æˆ‘ä»¬çš„ç½‘é¡µé»˜è®¤æ”¯æŒçš„æ˜¯ ",["$","code",null,{"children":"light"}]," æ¨¡å¼ï¼Œä½†æ˜¯å½“æˆ‘åˆ‡æ¢åˆ° ",["$","code",null,{"children":"dark"}]," æ¨¡å¼ä¹‹åŽï¼Œç¬¬äºŒæ¬¡å†è®¿é—®æ—¶ï¼Œæˆ‘å¸Œæœ›è¯¥é¡µé¢ä¾ç„¶æ˜¯ ",["$","code",null,{"children":"dark mode"}],"ã€‚"]}],"\n",["$","p",null,{"children":["é‚£ä¹ˆæˆ‘ä»¬å°±å¿…é¡»è¦åšçš„ä¸€ä¸ªäº‹æƒ…å°±æ˜¯ï¼Œåœ¨é¡µé¢æ¸²æŸ“çš„ç¬¬ä¸€æ—¶é—´ï¼Œå°±èƒ½å¤Ÿå¾—çŸ¥ï¼Œè¯¥é¡µé¢å°±æ˜¯ ",["$","code",null,{"children":"dark mode"}],"ã€‚"]}],"\n",["$","p",null,{"children":"æˆ‘ä»¬é¢ä¸´çš„ä¸€ä¸ªæ¯”è¾ƒéš¾ç»“å±€çš„é—®é¢˜å°±æ˜¯ï¼Œè¯¥çŠ¶æ€åº”è¯¥å­˜å‚¨åœ¨å“ªé‡Œï¼Ÿ"}],"\n",["$","h2",null,{"id":"æ•°æ®æ¥æº","children":"æ•°æ®æ¥æº"}],"\n",["$","p",null,{"children":"å½“æˆ‘ä»¬ç¬¬äºŒæ¬¡è®¿é—®æ—¶ï¼Œæˆ‘ä»¬æœ‰ä¸¤ä¸ªæ•°æ®æ¥æºã€‚"}],"\n",["$","p",null,{"children":["ç¬¬ä¸€ç§ï¼Œå°†è¯¥çŠ¶æ€å­˜å‚¨åœ¨ç›´æŽ¥å­˜åœ¨æœåŠ¡ç«¯ã€‚è¿™æ ·ï¼Œæˆ‘ä»¬å¯ä»¥åœ¨æœåŠ¡ç«¯æŠŠå¯¹åº”çš„çŠ¶æ€ class æ¸²æŸ“åˆ°é¡µé¢ä¸Šï¼Œç›´æŽ¥ç›´å‡º ",["$","code",null,{"children":"dark mode"}],"ã€‚"]}],"\n",["$","p",null,{"children":"ä½†æ˜¯è¿™ç§æ–¹æ¡ˆæœ‰ä¸€ä¸ªé—®é¢˜å°±æ˜¯ï¼Œå¦‚æžœæˆ‘ä»¬è¦åœ¨æœåŠ¡ç«¯åŒºåˆ†æ¸…æ¥šä¸åŒç”¨æˆ·çš„çŠ¶æ€ï¼Œå­˜çš„æ—¶å€™å°±å¿…é¡»æŒ‰ç”¨æˆ·æ¥å­˜ã€‚å› æ­¤ç¬¬äºŒæ¬¡è®¿é—®æ—¶ï¼Œä¸ºäº†å¾—åˆ°è¿™ä¸ªçŠ¶æ€ï¼Œæˆ‘ä»¬é¦–å…ˆè¦åšç”¨æˆ·çš„é‰´æƒï¼Œé‰´æƒå¤±è´¥å°±å¾—ä¸åˆ°çŠ¶æ€ã€‚è¿™é‡Œå­˜åœ¨ä¸¤ä¸ªä¸è‰¯å½±å“ã€‚"}],"\n",["$","p",null,{"children":["ä¸€æ˜¯å¥å…¨å¤±è´¥ä¹‹åŽï¼Œæ— æ³•èŽ·å¾— ",["$","code",null,{"children":"dark mode"}],"ï¼Œåªèƒ½æ˜¾ç¤ºé»˜è®¤çš„ ",["$","code",null,{"children":"light mode"}],"ã€‚"]}],"\n",["$","p",null,{"children":"äºŒæ˜¯åŽç«¯é€»è¾‘é“¾è·¯åé•¿ï¼Œè¦å…ˆé‰´æƒï¼Œç„¶åŽè®¿é—®ç”¨æˆ·ä¿¡æ¯ï¼Œä»Žç”¨æˆ·ä¿¡æ¯ä¸­èŽ·å–ç”¨æˆ·çš„å­˜å‚¨çŠ¶æ€ï¼Œå¯èƒ½ä¼šå¯¼è‡´é¡µé¢ç›´å‡ºé€Ÿåº¦ä¸å¤Ÿå¿«ã€‚"}],"\n",["$","p",null,{"children":["ç¬¬äºŒç§ï¼Œå°†è¯¥çŠ¶æ€ç›´æŽ¥ç¼“å­˜åœ¨ ",["$","code",null,{"children":"localStorage"}]," ä¸­ã€‚é€šè¿‡å®¢æˆ·ç«¯ç»„ä»¶çš„é€»è¾‘åŽ»è®¾ç½® ",["$","code",null,{"children":"dark mode"}],"ã€‚"]}],"\n",["$","p",null,{"children":"ä½†æ˜¯è¿™ç§æ–¹æ¡ˆå¦‚æžœä¸ä»”ç»†å¤„ç†ï¼Œä¹Ÿä¼šå­˜åœ¨é—®é¢˜ï¼Œæˆ‘ä»¬åœ¨äº†è§£äº†æ‰§è¡Œå¸¸è§„é¡ºåºä¹‹åŽï¼Œå†æ¥åˆ†æžè¿™ç§æ–¹æ¡ˆçš„é—®é¢˜åœ¨å“ªé‡Œ"}],"\n",["$","h2",null,{"id":"æ‰§è¡Œé¡ºåº","children":"æ‰§è¡Œé¡ºåº"}],"\n",["$","p",null,{"children":"åœ¨ Next.js çš„é¡¹ç›®ä¸­ï¼Œå½“æˆ‘ä»¬é¦–æ¬¡è®¿é—®é¡µé¢æ—¶ï¼Œä¼šé¦–å…ˆæ‰§è¡ŒæœåŠ¡ç«¯ç»„ä»¶çš„æ¸²æŸ“ã€‚å‘å®¢æˆ·ç«¯è¿”å›žå­—ç¬¦ä¸²ã€‚"}],"\n",["$","p",null,{"children":["ç„¶åŽå®¢æˆ·ç«¯å¾—åˆ°å­—ç¬¦ä¸²ä¹‹åŽï¼Œæµè§ˆå™¨ä¼šæ¸²æŸ“è¯¥å­—ç¬¦ä¸²ï¼Œæ­¤æ—¶æ¸²æŸ“å®Œæˆä¹‹åŽå°±ä¼šç›´æŽ¥æ˜¾ç¤ºé¡µé¢ã€‚æ­¤æ—¶çš„é—®é¢˜å°±åœ¨äºŽï¼Œæˆ‘ä»¬å‡†å¤‡çš„ ",["$","code",null,{"children":"dark mode"}]," çš„é€»è¾‘è¿˜æ²¡æœ‰æ‰§è¡Œï¼Œå› æ­¤é¡µé¢ä¼šé¦–å…ˆæ˜¾ç¤º ",["$","code",null,{"children":"light mode"}],"."]}],"\n",["$","p",null,{"children":["ç„¶åŽè¿›è¡Œ React ç»„ä»¶çš„æ°´åˆï¼Œåœ¨æ°´åˆçš„è¿‡ç¨‹ä¸­æ‰§è¡Œå®¢æˆ·ç«¯ç»„ä»¶ï¼Œè¿™ä¸ªè¿‡ç¨‹ä¸­ä¼šæ‰§è¡Œä»Ž ",["$","code",null,{"children":"localStorage"}]," ä¸­èŽ·å–ä¸Šæ¬¡è®¿é—®æ—¶è®¾ç½®çš„ ",["$","code",null,{"children":"dark mode"}],"ï¼Œæ°´åˆæ¸²æŸ“å®Œæˆä¹‹åŽï¼Œæ˜¾ç¤º ",["$","code",null,{"children":"dark mode"}]]}],"\n",["$","p",null,{"children":["æ‰€ä»¥æœ€ç»ˆçš„æ•ˆæžœæ˜¯ï¼Œé¡µé¢åˆå§‹åŒ–çš„è¿‡ç¨‹ä¼šç»åŽ†ä¸€ä¸ªå…ˆæ˜¾ç¤º ",["$","code",null,{"children":"light mode"}]," ï¼Œç„¶åŽæ˜¾ç¤º ",["$","code",null,{"children":"dark mode"}]," çš„åˆ‡æ¢è¿‡ç¨‹ã€‚"]}],"\n",["$","p",null,{"children":"è¿™å¹¶ä¸ç¬¦åˆæˆ‘ä»¬çš„æœŸæœ›ã€‚"}],"\n",["$","p",null,{"children":["æˆ‘ä»¬æœŸæœ›çš„æ˜¯ï¼Œé¡µé¢åˆ·æ–°æ—¶ï¼Œå°±ç›´æŽ¥æ˜¯ ",["$","code",null,{"children":"dark mode"}],"ï¼Œè€Œä¸æ˜¯ç»åŽ†é—ªä¸€ä¸‹åˆ‡æ¢çš„è¿‡ç¨‹ã€‚"]}],"\n",["$","p",null,{"children":"äºŽæ˜¯ï¼Œè¦è§£å†³è¿™ä¸ªé—®é¢˜ï¼Œå°±å˜æˆäº†ä¸€ä¸ªå¾ˆéš¾æžå®šçš„ç‚¹ã€‚"}],"\n",["$","p",null,{"children":"é‚£åº”è¯¥æ€Žä¹ˆåŠžå‘¢ï¼Ÿæˆ‘ä»¬åœ¨åŽç»­çš„é€»è¾‘ä¸­ï¼Œä¸€ç‚¹ç‚¹çš„æ¥å‰–æžè¿™ä¸ªæ–¹æ¡ˆã€‚"}]],null,["$","$L6",null,{"children":"$L7"}]]}],{},null,false]},null,false]},null,false]},[["$","p","l",{"className":"text-center h-full max-w-6xl m-auto","children":"Loading..."}],[],[]],false]},[["$","p","l",{"className":"text-center h-full max-w-6xl m-auto","children":"Loading..."}],[],[]],false],["$","$1","h",{"children":[null,["$","$1","METuLTS22wLxEGzk1VTO7",{"children":[["$","$L8",null,{"children":"$L9"}],["$","$La",null,{"children":"$Lb"}],null]}]]}],false]],"m":"$undefined","G":["$c","$undefined"],"s":false,"S":true}
+d:I[2991,["3333","static/chunks/3333-1bcd0bcbf4ab8904.js","8022","static/chunks/8022-5b598c592a235a02.js","9292","static/chunks/9292-3d39480cd8ecbcd2.js","9809","static/chunks/9809-805a974cd3315322.js","4438","static/chunks/4438-c0733ed69d5fb09f.js","7177","static/chunks/app/layout-f9c682b02fca755d.js"],"default"]
+e:I[333,["3333","static/chunks/3333-1bcd0bcbf4ab8904.js","8022","static/chunks/8022-5b598c592a235a02.js","9292","static/chunks/9292-3d39480cd8ecbcd2.js","9809","static/chunks/9809-805a974cd3315322.js","4438","static/chunks/4438-c0733ed69d5fb09f.js","7177","static/chunks/app/layout-f9c682b02fca755d.js"],"ThemeProvider"]
+f:I[5664,["3333","static/chunks/3333-1bcd0bcbf4ab8904.js","8022","static/chunks/8022-5b598c592a235a02.js","9292","static/chunks/9292-3d39480cd8ecbcd2.js","9809","static/chunks/9809-805a974cd3315322.js","4438","static/chunks/4438-c0733ed69d5fb09f.js","7177","static/chunks/app/layout-f9c682b02fca755d.js"],"GlobalProvider"]
+10:I[9157,["3333","static/chunks/3333-1bcd0bcbf4ab8904.js","8022","static/chunks/8022-5b598c592a235a02.js","9292","static/chunks/9292-3d39480cd8ecbcd2.js","9809","static/chunks/9809-805a974cd3315322.js","4438","static/chunks/4438-c0733ed69d5fb09f.js","7177","static/chunks/app/layout-f9c682b02fca755d.js"],"AppSidebar"]
+11:I[6795,["3333","static/chunks/3333-1bcd0bcbf4ab8904.js","8022","static/chunks/8022-5b598c592a235a02.js","9292","static/chunks/9292-3d39480cd8ecbcd2.js","9809","static/chunks/9809-805a974cd3315322.js","4438","static/chunks/4438-c0733ed69d5fb09f.js","7177","static/chunks/app/layout-f9c682b02fca755d.js"],"Toaster"]
+12:I[7352,["3333","static/chunks/3333-1bcd0bcbf4ab8904.js","2260","static/chunks/app/next/(skin)/17.source/layout-68d217912ccf8d68.js"],"default"]
+2:["$","html",null,{"lang":"zh","suppressHydrationWarning":true,"className":"bg-background h-full","children":["$","body",null,{"className":"text-sm text-foreground h-full","children":[["$","$Ld",null,{}],["$","$Le",null,{"defaultTheme":"light","children":["$","$Lf",null,{"children":["$","$L10",null,{"children":["$","$L3",null,{"parallelRouterKey":"children","segmentPath":["children"],"error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L4",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[[],["$","div",null,{"className":"h-full flex justify-center items-center space-x-4","children":[["$","h2",null,{"className":"font-bold text-lg","children":"404"}],["$","div",null,{"className":"h-8 border-l border-gray-600"}],["$","div",null,{"children":"This page could not be found."}]]}]],"forbidden":"$undefined","unauthorized":"$undefined"}]}]}]}],["$","$L11",null,{}]]}]}]
+5:["$","$L12",null,{"children":["$","$L3",null,{"parallelRouterKey":"children","segmentPath":["children","next","children","(skin)","children","17.source","children"],"error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L4",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]}]
+b:[["$","meta","0",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
+9:[["$","meta","0",{"charSet":"utf-8"}],["$","title","1",{"children":"è¿™æ³¢èƒ½åæ€çš„ä»˜è´¹è¯¾"}],["$","meta","2",{"name":"description","content":"Generated by Next.js"}],["$","link","3",{"rel":"icon","href":"/favicon.ico","type":"image/x-icon","sizes":"16x16"}]]
+7:null
+```
+
+或者你可以在页面代码中看到这样类似的内容
+
+```js
+self.__next_f.push([1,"PAYLOAD_STRING_HERE" ...])
+```
+
+RSC Payload 是渲染 React Server Components 树的压缩格式，它**完整的记录了代码在项目中的模块结构、渲染结果、props 传递内容**
+
+我们可以看到 RSC 的格式中，每行都是以一个数字或者字母开头，后面跟着一个冒号，通常情况下，这些字符具有如下的语义
+
++ **$**：表示某个服务器组件生成的 DOM 定义。
++ **I**：表示一个模块，他们调用特定的脚本，这也是客户端组件如何被加载的方式（直接执行或者懒加载）。
++ **HL**：表示提示，并连接到特定的资源，例如 css 或者字体等
+
+RSC Payload 包含的内容具体有
+
++ 1、服务器组件的渲染结果 HTML 片段
++ 2、客户端组件应该呈现的位置占位符，及其对代码模块的引用地址
++ 3、从服务器组件传递到客户端组件的任何 props
+
+这些数据对于确保前后端渲染的一致性有非常大的帮助，除此之外，客户端渲染能够更快的在 RSC Payload 的基础之上创建 Fiber 节点，从而加快客户端水合的速度。
+
+在我们按照模块结构树规划了服务端组件和客户端组件之后，有了这份 RSC Payload，**可以让服务端组件不会在客户端执行就可以充分的重现完整的 Fiber tree**。
+
+因此，在打包构建时，服务端组件不会打包在压缩包中，从而可以有机会极大的缩小打包体积。
+
+
+## 服务端渲染策略
+
+服务端组件有三个渲染策略。在 App Router 中，我们并不需要在开发过程中，特别详细的去区分到底应该使用哪种策略，NextJS 会自动识别并使用最适合的方式。
+
+但是在后期的一些优化上，还是要对不同的方案有一个比较详细的了解才能使用合适的方式。
+
+## 1、静态渲染
+
+静态渲染在有的地方又称为 **SSG**。渲染工作在项目构建时完成。因此，我们可以在构建时，就将渲染结果直接上传到 CDN，从而加快页面的访问速度。
+
+静态渲染适合内容始终固定的页面，例如静态博客文章、或者产品介绍页面等。如果页面内容需要根据用户的身份发生变化，则无法使用静态渲染。因此，静态渲染在实践中的应用场景比较有限，。
+
+## 2、动态渲染
+
+动态渲染又称为 **SSR**。渲染工作在用户访问路由时执行。很显然，静态的访问速度肯定要远高于动态渲染，动态渲染也会让服务端承担**更大的内存和并发压力**。但是在许多场景之下，页面渲染内容常常与用户的个人信息有密切关联，因此，我们不得不使用动态渲染。
+
+原则上来说，开发项目时我们要尽可能的避免使用动态渲染。虽然有的时候我们不得不用，但是原则上是能绕开就绕开。
+
+当然，NextJS 也针对 SSR 做了特定的优化，为了减少 SSR 对服务端造成的压力，NextJS 中做了一些特定的优化方式
+
+例如，**带有缓存的动态路由**，针对同一个用户而言，我们可以对渲染数据进行缓存，当用户短时间以内多次访问同一个路由时，我们可以通过配置的方式访问缓存内容，从而加快页面的显示速度，以及减小服务端的并发压力。
+
+我们只需要在 next.config.ts 中进行简单的配置，缓存策略即可生效
+
+```ts next.config.ts -c
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  experimental: { // 缓存 Pages，默认时间为 0
+    staleTimes: {
+      dynamic: 30, // 针对 ssr，非静态、非预取，Link 的 prefetch 不为 true
+      static: 180, // 静态，或者 Link 的 prefetch 为 true
+    }
+  }
+};
+```
+
+> 注意，这里缓存的内容，是特指 RSC Payload，而不是最后渲染完成之后的 DOM 节点。
+
+Next.js 中还实现了其他的缓存策略，我们后续会专门用一个专题来讲解。
+
+当你在服务端组件中请求数据，或者使用了某些可以获取最新值的 API，都会被 NextJS 认为你想要使用动态渲染，这些 API 包括
+
++ `cookies`
++ `headers`
++ `connection`
++ `draftMode`
++ `searchParams`
++ `unstable_noStore`
+
+我们无需去记忆这些 API 具体有哪些，只有一个标准：那就是你试图**获取最新数据、状态、参数**时，你自然会使用到他们。
+
+你也可以在获取服务端数据时，传入参数来明确得告知 NextJS 你是否需要缓存该数据。
+
+```ts
+fetch(`https://...`, { cache: 'force-cache' | 'no-store' })
+```
+
+
+## 流式渲染
+
+流式渲染是 RSC 的核心特征之一，他在 Next.js 中被默认支持。首先在服务端中，Next 会按照路由段、`loading.tsx`、`Suspense` 等标志将渲染工作拆分成多个任务块。也就意味着，客户端不用等待所有的数据都传输完成才能开始进行水合工作，只要有其中一部分任务块传输完成之后，就可以开始水合，从而加快页面的可交互速度。
+
+或者在页面上也可以快速显示一个回退的 `loading` 组件，等待内容传输完成。
+
+服务端返回了一个响应头中包含了 `Transfer-Encoding: chunked` 字段的请求，让浏览器知道要进行流式相应。最后，服务器返回一个大小为零的块，来表示流式传输结束。
+
+在项目开发时，我们无需对流式传输投入过多的关注度，因为他本身是框架默认支持的特性。我们只需要对其概念有所了解即可。充分利用路由段和 `Suspense` 对渲染内容进行分块，是我们在开发中要做的事情。
