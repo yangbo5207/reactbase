@@ -1,0 +1,22 @@
+.client-tree-svg {
+  --color-text: hsl(222deg 22% 5%);
+  --color-gray-200: hsl(225deg 16% 86%);
+  --color-gray-400: hsl(225deg 8% 70%);
+  
+  --directive-color: rgba(68, 51, 255, .7);
+  --boundary-color: #43f;
+  --boundary-line-color: #a6b6f2;
+  
+  width: 80%;
+  margin: 0 auto;
+}
+
+.dark .client-tree-svg {
+  --color-text: #dfdfde;
+  --color-gray-200: hsl(225deg 16% 86%);
+  --color-gray-400: hsl(225deg 8% 70%);
+  
+  --directive-color: #fdfdfd;
+  --boundary-color: #fdf;
+  --boundary-line-color: #a6b6f2;
+}

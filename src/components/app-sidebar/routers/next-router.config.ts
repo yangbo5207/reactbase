@@ -53,7 +53,7 @@ const router = [
     icon: BookOpen,
     items: [
       {title: 'server render', url: '/next/21.server'},
-      {title: 'client render', url: '/next/18.cssvar'},
+      {title: 'client render', url: '/next/22.client'},
     ],
   },
   {

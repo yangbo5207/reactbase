@@ -1,0 +1,41 @@
+import {CodeTabs} from '@/components/code-with-tabs'
+import TreeSVG from './tree-svg'
+
+## Table of contents
+
+## use client
+
+在 NextJS 中，默认情况下，组件都是服务端组件。我们可以使用 `use client` 表示一个客户端组件。
+
+```ts page.tsx -c
+// !mark
+'use client'
+
+import { useState } from 'react'
+
+export default function Counter() {
+  const [count, setCount] = useState(0)
+
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>Click me</button>
+    </div>
+  )
+}
+```
+
+需要特别注意的是，他真实的含义是在**模块结构树**中，表达服务端与客户端组件的边界。因此，在这颗树的后续子模块中，无需使用 `use client` 来表示客户端组件，NextJS 会自动将其解析为在客户端运行的模块。
+
+如下图所示
+
+<TreeSVG />
+
+因此，我们只需要在少数几个边界处使用 `use client` 即可，而无需在每个客户端模块都用它来标记。
+
+理想情况下，我们应该尽可能的将客户端组件下放到更末尾的节点，以避免造成冗余的重复渲染。具体的运用我们在前面已经通过大量的实例来验证这个结论。
+
+
+## 执行
+
+// 待续...
