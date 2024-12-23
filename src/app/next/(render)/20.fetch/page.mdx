@@ -1,0 +1,105 @@
+import {CodeTabs} from '@/components/code-with-tabs'
+
+## Table of contents
+
+## fetch(url, options)
+
+NextJS 扩展了 web `fetch()` API，让 `fetch` 方法可以在服务端渲染时请求数据。我们可以在服务端组件中直接调用，如下所示
+
+```ts page.tsx -c
+export default async function Page() {
+  let data = await fetch('https://api.vercel.app/blog')
+  let posts = await data.json()
+  return (
+    <ul>
+      {posts.map((post) => (
+        <li key={post.id}>{post.title}</li>
+      ))}
+    </ul>
+  )
+}
+```
+
+
+由于是扩展了浏览器的 fetch 方法，因此，[配置参数大多数都和浏览器的 fetch 方法保持一致](https://developer.mozilla.org/zh-CN/docs/Web/API/Window/fetch#parameters)，这篇文章主要介绍有差异的几个缓存配置项
+
+## `options.cache`
+
+该配置项约定了数据请求的缓存行为，主要有三个值
+
+```ts
+fetch(`https://...`, { cache: 'force-cache' | 'no-store' })
+```
+
+ 1、`auto-no-cache`：在 Next.js 14 的版本中， 这是默认值，默认情况下的页面都是在执行构建 `next build` 时进行静态预渲染处理，此时，如果服务端组件中有 `fetch` 请求，请求会执行并得到结果，然后继续参与预渲染的过程。在部署到生产环境之后，访问到该页面时，也仅会始终返回提前预渲染好之后的结果，而不会重新 fetch。
+
+但是有一种情况除外，如果在对应路由上检测到使用了 `动态 API(cookies/headers等)`，每次访问路由，fetch 都会重新请求资源并在服务端执行动态渲染。
+
+在 Next 15 之后，默认情况下，针对 `get` 请求，NextJS 不会缓存数据。我们可以使用 _`export dynamic = 'force-static'`_ 来做到之前同样的事情。
+
+> 由于官方文档中明确表示，后续会持续对默认缓存策略进行调整，如果你在实践的过程中，发现有与我描述不一致的情况，请及时跟我反馈修正
+
++ 2、`no-store`：不缓存。此时构建时的预渲染不会发生。项目部署之后，任何情况下访问路由，都重新请求自选并执行动态渲染。
+
++ 3、`force-cache`：强制缓存。没有匹配到缓存时才会发送请求，其他任何情况都不会发送请求。即使是使用了动态 API.
+
+## options.next.revalidate
+
+```ts
+fetch(`https://...`, { next: { revalidate: false | 0 | number } })
+```
+
+设置资源的缓存寿命（以秒为单位）
+
+`false`：无期限缓存。语义上等同于 `revalidate: Infinity`
+
+`0`：不缓存，防止资源被缓存
+
+`number`：指定资源缓存寿命时间为多少秒
+
+
+我们也可以在路由对应的 `layout.tsx` 与 `page.tsx` 上配置 `revalidate`，
+
+```ts page.tsx
+export const revalidate = false
+// false | 0 | number
+```
+
+需要注意的是，此时最终会选择数值更低的那一个作为资源缓存寿命。因此，我们只需要在一个地方设置该值即可。
+
+冲突的设置，例如 _`{revalidate: 3600, cache: 'no-store'}`_ 会导致错误。
+
+
+## options.next.tags
+
+```ts
+fetch(`https://...`, { next: { tags: ['collection'] } })
+```
+
+设置资源的缓存标签。
+
+这个标签非常有用，因为我们可以使用 `revalidateTag` 方法，主动使标签对应的缓存资源失效。自定义标签的最大长度为 256 个字符，最大标签项数为 128。
+
+```ts app/actions.ts -c
+'use server'
+
+import { revalidateTag } from 'next/cache'
+
+export default async function submit() {
+  await addPost()
+  revalidateTag('collection')
+}
+```
+
+或者在路由的验证中，主动使对应的 tag 资源失效
+
+```ts app/api/revalidate/route.ts
+import type { NextRequest } from 'next/server'
+import { revalidateTag } from 'next/cache'
+
+export async function GET(request: NextRequest) {
+  const tag = request.nextUrl.searchParams.get('tag')
+  revalidateTag(tag)
+  return Response.json({ revalidated: true, now: Date.now() })
+}
+```

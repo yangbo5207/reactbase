@@ -52,8 +52,10 @@ const router = [
     url: '',
     icon: BookOpen,
     items: [
+      {title: 'fetch', url: '/next/20.fetch'},
       {title: 'server render', url: '/next/21.server'},
       {title: 'client render', url: '/next/22.client'},
+      {title: 'ISR', url: '/next/23.isr'},
     ],
   },
   {
