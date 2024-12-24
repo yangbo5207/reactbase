@@ -1,0 +1,134 @@
+import {CodeTabs} from "@/components/code-with-tabs";
+
+## Table of contents
+
+## 动态路由
+
+当我们实现无法确定明确的路由段名称，并且想要基于动态数据创建路由时，那么，我们就可以使用动态路由，动态路由的具体值可以在请求时生成，也可以在 build 时，预渲染生成。
+
+在代码结构中，通过给文件夹命名为 `[folderName]` 的方式来创建动态路由。例如，针对商品详情页，我们可以使用 `[productID]`，针对博客详情，我们可以给文件夹命名为 `[slug]`
+
+我们可以在 `layout` `page` `route` `generateMetadata` 中获得动态路由段的参数。
+
+## 案例
+
+例如，在一个博客系统中，我们的路由设计如下
+
+```ts
++ app
+  + blog
+    + [slug]
+      - layout.tsx
+      - page.tsx
+```
+
+此时，我们得到的实际路由可能就会包含
+
+```ts
+/blog/a
+/blog/b
+/blog/c
+/blog/d
+```
+
+我们可以在 `page.tsx` 中，通过 `props.params` 获得 `slog` 的具体值
+
+```tsx app/ablog/[slug]/page.tsx
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}) {
+  const slug = (await params).slug
+  return <div>My Post: {slug}</div>
+}
+```
+
+## 生成静态参数
+
+大多数情况下，我们使用动态路由的目的是为了能够在构建时自动创建静态路由。而不是在请求时按需生成。`generateStaticParams` 函数可以帮我们做到这一点
+
+我们需要在 `page.tsx` 中，单独创建该函数
+
+```ts app/blog/[slug]/page.tsx
+export async function generateStaticParams() {
+  const posts = await fetch('https://.../posts').then((res) => res.json())
+
+  return posts.map((post) => ({
+    slug: post.slug,
+  }))
+}
+```
+
+这里有一个小的优化点是，当代码中存在多个 `generateStaticParams` `layout` `page` 中请求相同的内容时，请求仅发送一次，而不会重复请求。
+
+## 捕获后续所有路由段
+
+当我们在给文件夹命名时，在中括号中添加 `...`，例如 `[...slug]` ，将会匹配到后续所有路由段。
+
+例如，在一个博客系统中，我们的路由设计如下
+
+```ts
++ app
+  + blog
+    + [...slug]
+      - layout.tsx
+      - page.tsx
+```
+
+此时，我们得到的实际路由可能就会包含
+
+```ts
+/blog/a         { slug: ['a'] }
+/blog/a/b       { slug: ['a', 'b'] }
+/blog/a/b/c     { slug: ['a', 'b', 'c'] }
+```
+
+## 捕获所有路由段：Optional
+
+通过这样的格式，`[[...slug]]` 可以为路由匹配增加可选值 `Optional`，他与 `[...slug]` 的区别就是，可以匹配不传参数的路由段。
+
+例如，在一个博客系统中，我们的路由设计如下
+
+```ts
++ app
+  + blog
+    + [[...slug]]
+      - layout.tsx
+      - page.tsx
+```
+
+此时，我们得到的实际路由可能就会包含
+
+```ts
+// !diff +
+/blog           { slug: undefined }
+/blog/a         { slug: ['a'] }
+/blog/a/b       { slug: ['a', 'b'] }
+/blog/a/b/c     { slug: ['a', 'b', 'c'] }
+```
+
+
+## TypeScript
+
+简单介绍一下，不同的配置在使用时如何写 TS 类型
+
+```ts page.tsx
+
+type Params = Promsie<{slug: string}>
+
+export default async function Page({ params }: { params: Params }) {
+  return <h1>My Page</h1>
+}
+```
+
+我们主要关注 Promise 中的类型，其他的都保持一致。
+
+列表如下
+
+|Route                              |params Type Definition            |
+|:---                               |:---                              |
+|app/blog/[slug]/page.tsx           | `{ slug: string }`               |
+|app/shop/[...slug]/page.tsx        | `{ slug: string[] }`             |
+|app/shop/[[...slug]]/page.tsx      | `{ slug?: string[] }`            |
+|app/[cateId]/[itemId]/page.tsx     | `{ cateId: string, itemId: string }` |

@@ -34,6 +34,7 @@ const router = [
       {title: '路由加载原理', url: '/next/15.loader'},
       {title: 'Link 详解', url: '/next/16.link'},
       {title: '路由分组', url: '/next/17.group'},
+      {title: '动态路由', url: '/next/18.dynamic'},
     ],
   },
   {

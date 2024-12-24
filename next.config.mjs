@@ -42,7 +42,7 @@ const autolinkHeadingOptions = {
 const withMDX = createMDX({
   extension: /\.mdx?$/,
   options: {
-    remarkPlugins: [remarkToc, [remarkCodeHike, chConfig]],
+    remarkPlugins: [remarkToc, remarkGfm, [remarkCodeHike, chConfig]],
     recmaPlugins: [[recmaCodeHike, chConfig]],
     rehypePlugins: [[rehypeSlug, [rehypeAutolinkHeadings, autolinkHeadingOptions]]],
     jsx: true,
