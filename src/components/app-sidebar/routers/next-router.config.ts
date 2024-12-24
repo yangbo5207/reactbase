@@ -56,6 +56,7 @@ const router = [
       {title: 'server render', url: '/next/21.server'},
       {title: 'client render', url: '/next/22.client'},
       {title: 'ISR', url: '/next/23.isr'},
+      {title: 'PPR', url: '/next/24.ppr'},
     ],
   },
   {
@@ -63,10 +64,7 @@ const router = [
     url: '',
     icon: Settings2,
     items: [
-      {title: '基础协议', url: '/next/general'},
-      {title: '传输内容', url: '/next/team'},
-      {title: 'RSC 传输方式', url: '/next/billing'},
-      {title: '优劣分析', url: '/next/limits'},
+      {title: '待续...', url: '/next/general'},
     ],
   },
   {
@@ -74,10 +72,7 @@ const router = [
     url: '',
     icon: Settings2,
     items: [
-      {title: '基础协议', url: '/next/general'},
-      {title: '传输内容', url: '/next/team'},
-      {title: 'RSC 传输方式', url: '/next/billing'},
-      {title: '优劣分析', url: '/next/limits'},
+      {title: '待续...', url: '/next/general'},
     ],
   },
 ]

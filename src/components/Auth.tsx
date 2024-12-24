@@ -33,7 +33,7 @@ export default function Auth({children}: any) {
   }
 
   return (
-    <div className='flex justify-center items-center h-[200px]'>
+    <div className='flex justify-center items-center h-[100vh]'>
       <Link className='text-blue-500' href='/next/0.auth'>没有阅读权限，点击获得</Link>
     </div>
   )

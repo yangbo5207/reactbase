@@ -1,0 +1,63 @@
+import {CodeTabs} from '@/components/code-with-tabs'
+
+## Table of contents
+
+## 部分预渲染
+
+
+
+> 部分预渲染是一项实验性功能，仅在 Cannary 上可用，可能未来会发生变化。它尚未准备好用于生产环境。
+
+我们可以使用部分预渲染（PPR）在同一路由中将静态渲染与动态渲染组合在一起使用。
+
+在构建过程中，NextJS 会尽可能多的渲染路由，开发者需要把动态代码单独封装到另外一个组件中，使用 `Suspense` 包裹。Suspense 的回退组件，将会被预渲染到 HTML 中。
+
+
+## 使用
+
+我们可以在 Next 15 中逐步采用 PPR，需要做两个配置行为
+
+一个是在 `next.config.ts` 中配置
+
+```ts next.config.ts -c
+import type { NextConfig } from 'next'
+
+const nextConfig: NextConfig = {
+  experimental: {
+    ppr: 'incremental',
+  },
+}
+
+export default nextConfig
+```
+
+然后在页面中单独配置 `experimental_ppr` 为 true
+
+```ts page.tsx
+import { Suspense } from 'react'
+import { StaticComponent, DynamicComponent, Fallback } from '@/app/ui'
+
+export const experimental_ppr = true
+
+export default function Page() {
+  return (
+    <>
+      <StaticComponent />
+      <Suspense fallback={<Fallback />}>
+        <DynamicComponent />
+      </Suspense>
+    </>
+  )
+}
+```
+
+这个配置将会对所有的子路由段生效，如果子路由段需要禁用，则需要在对应的子路由段中修改为 _`experimental_ppr = false`_
+
+
+## 场景
+
+PPR 是一项与流式传输结合起来运用的渲染方案。因此，针对一个动态页面，NextJS 可以立即传输静态内容到客户端，从而让客户端内容得到渲染。但是于此同时，其余的动态路由则在稍微延后的时间里，通过**同一个 http 请求**继续传输内容到客户端，完成最终的渲染。
+
+因此，与 ssr 相比，PPR 具备更快的页面响应速度，以及更小的服务端渲染压力。他可以以服务端渲染的方式，做到瀑布流类似的效果。
+
+> 通常情况下，瀑布流式渲染，是在客户端执行。

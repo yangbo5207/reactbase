@@ -1,5 +1,4 @@
 import { Pre, RawCode, highlight, HighlightedCode, AnnotationHandler, Inline } from "codehike/code"
-import { cn } from "@/lib/utils"
 import { callout } from "./annotations/callout"
 import {mark} from './annotations/mark'
 import { diff } from "./annotations/diff"
@@ -8,7 +7,6 @@ import { CodeIcon } from "./annotations/icons"
 import {CopyButton} from './annotations/copy-button'
 import theme from "@/theme.mjs"
 import React from "react";
-import Auth from './Auth'
 
 export async function InlineCode({ codeblock }: { codeblock: RawCode }) {
   const highlighted = await highlight(codeblock, theme)
@@ -28,9 +26,7 @@ export function Code({codeblock}: CodePorps) {
       style={{backgroundColor: "var(--ch-code-bg)",} as any}
     >
       <CodeHeader {...codeblock} />
-      <Auth>
-        <CodeSimple codeblock={codeblock} />
-      </Auth>
+      <CodeSimple codeblock={codeblock} />
     </div>
   )
 }

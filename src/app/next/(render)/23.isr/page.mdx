@@ -13,7 +13,6 @@ SSR(动态服务端渲染) 在实现逻辑上相对来说是比较简单，并�
 + 3、**PPR** 部分静态渲染
 + 4、**ESR** 边缘动态渲染
 
-> 在过往的一些方案中，有的团队提出了一种**优雅降级**的策略来解决内存不足的问题。优雅降级指的是当访问量过大时，通过一些技术手段（例如 监听内存使用情况）
 
 最理想的情况就是使用 SSG，在我们执行 `next build` 时，就可以将需要的页面全部渲染好，服务端不需要参与额外的逻辑执行就能把页面返回给客户端。但是许多情况下，我们无法提前预判所有的渲染内容。因此，在真实场景中，SSG 的应用场景十分有限，它仅仅适用部署上线之后，页面内容都基本上固定不改变的情况。
 
@@ -90,4 +89,147 @@ export const runtime = 'edge'
 
 **3、** 在开发模式中无效，开发模式中，始终按照动态渲染呈现结果。
 
-// 待续...
+> NextJS 的缓存方案，是 `revalidate`、`fetch`、`动态 API` 等配置的共同作用的结果。截止到创作这篇文章为止，项目中的实际的表现与官方文档描述有所不符，并且在未来几个月可能还会发生变化，因此，如果大家在使用过程中，有发现不一致的情况，以实际情况为主，并可以立即联系我更新文章内容
+
+## revalidate 案例
+
+在下面的例子中，我们要渲染一个**博客列表**，并设置每隔一个小时，缓存就更新一次。一个小时之后，页面的缓存将会在下一次访问后失效，后台 NextJS 会自动创建新的页面内容。
+
+```ts app/blog/page.tsx
+interface Post {
+  id: string
+  title: string
+  content: string
+}
+
+export const revalidate = 3600 // invalidate every hour
+
+export default async function Page() {
+  const data = await fetch('https://api.vercel.app/blog')
+  const posts: Post[] = await data.json()
+  return (
+    <main>
+      <h1>Blog Posts</h1>
+      <ul>
+        {posts.map((post) => (
+          <li key={post.id}>{post.title}</li>
+        ))}
+      </ul>
+    </main>
+  )
+}
+```
+
+类似与这种对实时性要求不高的数据，我们可以设置频率至少为一个小时。如果对时间精度要求比较高，那么我们可以使用后续的主动更新缓存的方式。但是如果我们需要实时结果，则应该直接使用动态渲染。
+
+## revalidatePath
+
+除了使用 `revalidate` 让 NextJS 按照固定频率更新缓存之外，我们还可以使用 `revalidatePath` 来在逻辑中根据实际需求主动更新缓存。
+
+例如，当我们创建一篇新的博客之后，在提交按钮的 `action` 回调中，就可以直接使用 `revalidatePath` 来更新列表的缓存。
+
+```ts action.ts
+'use server'
+
+import { revalidatePath } from 'next/cache'
+
+export async function createPost() {
+  // Invalidate the /posts route in the cache
+  revalidatePath('/posts')
+}
+```
+
+我们可以通过这个案例<a href='https://on-demand-isr.vercel.app/' target='_blank'>on-demand-isr</a>，来查看主动更新的演示，案例中有链接包含了源码。
+
+> 注意：当前的表现是，使用了该方法之后，会使客户端路由的所有缓存失效，但是未来官方团队承诺会修复该问题。
+
+## revalidateTag
+
+对于大多数情况，我们只需要使用 `revalidatePath` 来重置对应路由的缓存。如果在一些特定的情况，我们需要更精细的控制，则可以使用 `revalidateTag` 来重置请求缓存
+
+首先，我们可以在 fetch 请求中配置 `tag`
+
+```tsx page.tsx -c
+export default async function Page() {
+  const data = await fetch('https://api.vercel.app/blog', {
+    next: { tags: ['posts'] },
+  })
+  const posts = await data.json()
+  // ...
+}
+```
+
+如果我们使用了 ORM，或者链接了数据库，可以使用 `unstable_cache`
+
+```ts page.tsx -c
+import { unstable_cache } from 'next/cache'
+import { db, posts } from '@/lib/db'
+
+const getCachedPosts = unstable_cache(
+  async () => {
+    return await db.select().from(posts)
+  },
+  ['posts'],
+  { revalidate: 3600, tags: ['posts'] }
+)
+
+export default async function Page() {
+  const posts = getCachedPosts()
+  // ...
+}
+```
+
+然后在创建文章的表单提交中，重置缓存
+
+```ts action.ts
+'use server'
+
+import { revalidateTag } from 'next/cache'
+
+export async function createPost() {
+  // Invalidate all data tagged with 'posts' in the cache
+  revalidateTag('posts')
+}
+```
+
+## 缓存位置
+
+ISR 和缓存共享缓存位置。如果我们使用 `vercel` 部署,ISR 的缓存内容会自动保存到持久化缓存中。
+
+如果我们使用自己的服务器进行部署，缓存的内容则会保存到对应服务器的磁盘上（生成对应的文件）。
+
+当我们将 NextJS 部署到自己的服务器时，**使用 ISR 不需要做额外的处理**。
+
+
+## 调试
+
+如果我们使用了 `fetch` API 来请求数据，那么我们可以配置 logger 以展示请求是否缓存。配置方式如下所示
+
+```ts next.config.ts
+module.exports = {
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
+  },
+}
+```
+
+除此之外，我们也可以验证生产环境的行为。首先执行 `next build` 构建项目。然后执行 `next start` 基于构建结果在本地运行项目。此时 ISR 的表现行为与生产环境是一致的。
+
+我们还可以在环境变量的配置中加入如下配置项
+
+```ts .env
+NEXT_PRIVATE_DEBUG_CACHE=1
+```
+
+这将使 Next.js 服务器控制台记录 ISR 缓存命中和未命中。我们可以检查输出以查看在下一次构建期间生成了哪些页面，以及在按需访问路径时页面如何更新。
+
+
+## 应用方式
+
+要特别注意的是，ISR 的本质是静态更新。
+
+通常情况下，我们会在博客系统、电商网站等类似的场景中使用 ISR 来增量更新。这可以极大程度的减少 SSR 给服务端带来的压力。在页面的其余动态部分，例如评论、活动信息、点赞、收藏等功能，我们则应该将其内容使用客户端渲染来处理，从而做到动静结合。
+
+目前比较遗憾的是，ISR 无法与边缘运行时结合起来使用。因此，NextJS 又提出了一种新的方案 PPR 来解决更多的项目应用场景。接下来我们继续学习 PPR：部分预渲染，一种新的动静结合的运用方式。

@@ -3,8 +3,14 @@
 import {useEffect, ReactNode, useRef} from 'react'
 import {Telescope, MousePointerClick, PlaneTakeoff} from 'lucide-react'
 import Link from 'next/link'
+import Auth from '@/components/Auth'
 
-export default function PostLayout({children}: {children: ReactNode}) {
+type Props = {
+  children: ReactNode,
+  auth?: boolean
+}
+
+export default function PostLayout({children, auth = true}: Props) {
   const nav = useRef<any>(null)
   const index = useRef(0)
 
@@ -51,7 +57,7 @@ export default function PostLayout({children}: {children: ReactNode}) {
   return (
     <div className='relative'>
       <div className='keep'>
-        <div className='content'>{children}</div>
+        <div className='content'>{auth ? <Auth>{children}</Auth> : children}</div>
         <div className='nav'>
           <div ref={nav} className='headings mb-8'></div>
           <Link
