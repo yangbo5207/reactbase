@@ -1,32 +1,38 @@
 'use client'
 
-import {useGlobal} from '@/components/global-provider'
+import { useGlobal } from '@/components/global-provider'
 import Link from 'next/link'
+import { enc, SHA256, AES } from 'crypto-js'
 
-export const next_code = ['U', 'x', 'F', 's', 'c', 'G', 'V', 'k', 'X', '3', 'x', 'O', 'P', 'h', 'N', '8', '7', '9']
+const passphrase = 'next-start-2025'
 
-function equal(codeArr: string[], entercode: string = '') {
-  let r = true
+const key = SHA256(passphrase).toString(enc.Hex)
 
-  const enterarr = entercode.split('')
-
-  if (enterarr.length === 0) return false
-
-  enterarr.forEach((char, i) => {
-    if (char !== codeArr[i]) {
-      r = false
-    }
-  })
-
-  return r
+// 加密函数
+function encryptMessage(message: string, key: string) {
+  const encrypted = AES.encrypt(message, key).toString();
+  return encrypted;
 }
+
+// 解密函数
+function decryptMessage(encryptedMessage: string, key: string) {
+  const decrypted = AES.decrypt(encryptedMessage, key);
+  return decrypted.toString(enc.Utf8);
+}
+
+const active_code = 'UxFscGVkX3xOPhN879'
+
+// 每次更改时要执行一下该代码
+// const encryptedMessage = encryptMessage(active_code, key);
+// const encryptedMessage = 'U2FsdGVkX1+IjUFB19zXb7zoA2Sz/TyIjAfOCOz74aRKaJrhKMHGSkPPk77JTfbM'
 
 export function equalNext(entercode: string = '') {
-  return equal(next_code, entercode)
+  const decryptedMessage = decryptMessage(entercode, key);
+  return decryptedMessage === active_code
 }
 
-export default function Auth({children}: any) {
-  const {session, nextcode} = useGlobal()
+export default function Auth({ children }: any) {
+  const { session, nextcode } = useGlobal()
 
   if (equalNext(nextcode)) {
     return children

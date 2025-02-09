@@ -1,8 +1,8 @@
-import {useState, PropsWithChildren, use} from 'react'
-import {Slider} from '@/components/ui/slider'
-import Provider, {SettingContext} from './context'
+import { useState, PropsWithChildren, use } from 'react'
+import { Slider } from '@/components/ui/slider'
+import Provider, { SettingContext } from './context'
 
-export default function Container({children}: PropsWithChildren) {
+export default function Container({ children }: PropsWithChildren) {
   return (
     <Provider>
       <Wrapper>
@@ -15,19 +15,19 @@ export default function Container({children}: PropsWithChildren) {
   )
 }
 
-function Wrapper({children}: PropsWithChildren<any>) {
-  const {r, g, b} = use(SettingContext)
+function Wrapper({ children }: PropsWithChildren<any>) {
+  const { r, g, b } = use(SettingContext)
   const color = `rgb(${r}, ${g}, ${b})`
 
   return (
-    <div className='p-2 rounded border-4' style={{borderColor: color}}>
+    <div className='p-2 rounded border-4' style={{ borderColor: color }}>
       {children}
     </div>
   )
 }
 
 function SliderR() {
-  const {setR} = use(SettingContext)
+  const { setR } = use(SettingContext)
 
   function __rchange(value: number[]) {
     setR(value[0])
@@ -42,7 +42,7 @@ function SliderR() {
 }
 
 function SliderG() {
-  const {setG} = use(SettingContext)
+  const { setG } = use(SettingContext)
 
   function __gchange(value: number[]) {
     setG(value[0])
@@ -57,7 +57,7 @@ function SliderG() {
 }
 
 function SliderB() {
-  const {setB} = use(SettingContext)
+  const { setB } = use(SettingContext)
 
   function __bchange(value: number[]) {
     setB(value[0])

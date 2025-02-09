@@ -1,7 +1,7 @@
 'use client'
 
-import React, {createContext, useState, useEffect} from 'react'
-import {getLoginInfor, Session} from "@/components/app-sidebar/nav-user/api";
+import React, { createContext, useState, useEffect } from 'react'
+import { getLoginInfor, Session } from '@/components/app-sidebar/nav-user/api'
 
 type GlobalContextValue = {
   session: Session | null,
@@ -17,11 +17,11 @@ type GlobalProviderProps = {
 export const GlobalContext = createContext<GlobalContextValue>({
   session: null,
   nextcode: '',
-  setNextCode: (code: string) => {}
+  setNextCode: (code: string) => { }
 })
 
 export default function Provider(props: GlobalProviderProps) {
-  const {children} = props
+  const { children } = props
 
   const [session, setSession] = useState<Session | null>(null)
   const [nextcode, setNextCode] = useState<string>('')
@@ -29,7 +29,7 @@ export default function Provider(props: GlobalProviderProps) {
   useEffect(() => {
     let session: Session | null = null
     const login_message = localStorage.getItem('login_message')
-    if(login_message) {
+    if (login_message) {
       session = JSON.parse(login_message)
       setSession(session)
     }

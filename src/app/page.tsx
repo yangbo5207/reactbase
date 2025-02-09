@@ -3,7 +3,7 @@ import PostLayout from "@/components/PostLayout";
 
 export default function Page() {
   return (
-    <PostLayout>
+    <PostLayout auth={false}>
       <Intro />
     </PostLayout>
   )

@@ -1,15 +1,15 @@
 'use client'
 
 import * as React from "react"
-import {Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail, SidebarInset, SidebarProvider, SidebarTrigger} from "@/components/ui/sidebar"
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail, SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { NavMain } from "./nav-main"
 import { NavProjects } from "./nav-projects"
 import NavUser from "./nav-user"
 import { TeamSwitcher } from "./team-switcher"
-import {Provider} from './context'
+import { Provider } from './context'
 import HeaderBreadcrumb from "./breadcrumb";
-import {Button} from "@/components/ui/button";
-import {Github} from 'lucide-react'
+import { Button } from "@/components/ui/button"
+import { Github } from 'lucide-react'
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
